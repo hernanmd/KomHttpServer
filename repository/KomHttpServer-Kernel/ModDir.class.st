@@ -50,6 +50,11 @@ ModDir class >> directoryExists: aFileDirectory [
 	
 ]
 
+{ #category : #accessing }
+ModDir class >> fullFilePath [
+	^ModDoc fullFilePath
+]
+
 { #category : #bindings }
 ModDir class >> serverDirectory [
 
