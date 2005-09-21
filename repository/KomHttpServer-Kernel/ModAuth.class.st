@@ -42,13 +42,13 @@ ModAuth class >> user: userName [
 { #category : #accessing }
 ModAuth >> authDb [
 
-	^authDb
+	^#'AuthDB-Current' binding
 ]
 
 { #category : #accessing }
 ModAuth >> authDb: anAuthDb [
 
-	authDb := anAuthDb
+	^#'AuthDB-Current' binding: anAuthDb
 ]
 
 { #category : #accessing }
@@ -104,6 +104,10 @@ ModAuth >> extractUser: auth [
 
 { #category : #processing }
 ModAuth >> processHttp [
+	"Extract any authorization info. If there is none, or if
+	password fails, make an authorizationResponse and return
+	true to indicate we have handled the request."
+	
 	| request |
 	request := HttpRequest current.
 	self extractAuthInfo: request

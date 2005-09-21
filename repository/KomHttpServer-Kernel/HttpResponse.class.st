@@ -185,9 +185,24 @@ HttpResponse class >> new [
 ]
 
 { #category : #'instance creation' }
-HttpResponse class >> redirectTo: url [
+HttpResponse class >> redirectTo: urlString [
 	"Create a redirection response."
 
+	| url |
+	url _ urlString squeakToIso isoToUtf8 asUrl fullPath." self halt."
+	^(HttpResponse
+			status: #tempMoved
+			contents: 'Temporarily moved to: <A HREF="', url, '">', url, '</A>')
+		fieldAt: 'Location' put: url;
+		fieldAt: 'URI' put: url; yourself
+]
+
+{ #category : #'instance creation' }
+HttpResponse class >> redirectToAbsolute: urlString [
+	"Create a redirection response to an absolute url."
+
+	| url |
+	url _ urlString squeakToIso isoToUtf8.
 	^(HttpResponse
 			status: #tempMoved
 			contents: 'Temporarily moved to: <A HREF="', url, '">', url, '</A>')
@@ -376,11 +391,12 @@ HttpResponse >> pvtWriteContentTypeOn: aStream [
 { #category : #responding }
 HttpResponse >> pvtWriteContentsOn: aStream [
 	| chunkSize cnts |
-	chunkSize _ self responseChunkSize.
+"	chunkSize _ self responseChunkSize."
 	cnts _ self contents.
-
-	[cnts atEnd] whileFalse: 
-		[aStream nextPutAll: (cnts next: chunkSize); flush]
+	aStream nextPutAllFlush: cnts contents
+	
+"	[cnts atEnd] whileFalse: 
+		[aStream nextPutAll: (cnts next: chunkSize); flush]"
 ]
 
 { #category : #responding }
@@ -395,15 +411,15 @@ HttpResponse >> pvtWriteCookiesOn: aStream [
 { #category : #responding }
 HttpResponse >> pvtWriteFieldsOn: aStream [
 
+	| crlf |
+	crlf _ String crlf.
 	fields isEmptyOrNil ifTrue: [ ^self ].
-
 	fields keysAndValuesDo: [ :k :v |
 		aStream
 			nextPutAll: k;
 			nextPutAll: ': ';
 			nextPutAll: v;
-			nextPutAll: String crlf
-	]
+			nextPutAll: crlf]
 ]
 
 { #category : #responding }
@@ -528,21 +544,13 @@ HttpResponse >> statusCodeAndReason [
 ]
 
 { #category : #responding }
-HttpResponse >> writeHeadersOn: aStream [
-
-	| tmp |
-	"Header"
-
-	tmp _ WriteStream on: ''.
-	self pvtWriteStatusOn: tmp.
-	self pvtWriteFieldsOn: tmp.
-	self pvtWriteCookiesOn: tmp.
-	self pvtWriteContentTypeOn: tmp.
-	self pvtWriteContentLengthOn: tmp.
-	tmp nextPutAll: String crlf.
-	aStream nextPutAll: tmp contents; flush.
-
-
+HttpResponse >> writeHeadersOn: aStream [ 
+	self pvtWriteStatusOn: aStream;
+		 pvtWriteFieldsOn: aStream;
+		 pvtWriteCookiesOn: aStream;
+		 pvtWriteContentTypeOn: aStream;
+		 pvtWriteContentLengthOn: aStream.
+	aStream crlf
 ]
 
 { #category : #responding }

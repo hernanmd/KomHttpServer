@@ -370,3 +370,29 @@ HttpService >> start [
 	self class initializeServerType.
 	^super start
 ]
+
+{ #category : #'starting and stopping' }
+HttpService >> stop [
+	"Give modules a chance to stop too."
+	
+	plug ifNotNil: [plug stop].
+	super stop
+]
+
+{ #category : #serving }
+HttpService >> value: aSocket [
+	"This method is invoked by the listener.	
+	The following ways you can profile the
+	server forcing it to run in a single process.
+	Remember to change Socket>>deadLineSecs: to return
+	a constant integer - somehow otherwise profiling
+	screws up.
+
+		MessageTally spyOn: [self serve: aSocket]
+		
+		TimeProfileBrowser onBlock: [self serve: aSocket]"
+
+	[self serve: aSocket] newProcessWithClampedBindings
+		name: (self name, ' connection');
+		resume
+]

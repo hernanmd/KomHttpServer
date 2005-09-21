@@ -68,10 +68,10 @@ HttpRequest class >> decodeUrlEncodedForm: string multipleValues: boolean [
 		ifFalse: [end _ end - 1].
 	eqSignPos _ string indexOf: $= startingAt: start.
 	(eqSignPos > end or: [eqSignPos == 0])
-		ifTrue: [key _ (key _ string copyFrom: start to: end) unescapePercents.
+		ifTrue: [key _ (key _ string copyFrom: start to: end) unescapePercents utf8ToIso isoToSqueak.
 			value _ '']
-		ifFalse: [key _ (key _ string copyFrom: start to: eqSignPos-1) unescapePercents.
-			value _ (value _ string copyFrom: eqSignPos+1 to: end) unescapePercents].
+		ifFalse: [key _ (key _ string copyFrom: start to: eqSignPos-1) unescapePercents utf8ToIso isoToSqueak.
+			value _ (value _ string copyFrom: eqSignPos+1 to: end) unescapePercents utf8ToIso isoToSqueak].
 	self addKey: key value: value toForm: dict multipleValues: boolean.
 	start _ end + 2.
 	more] whileTrue.
@@ -123,10 +123,11 @@ HttpRequest class >> initialize [
 
 { #category : #parsing }
 HttpRequest class >> parseHttpHeader: string [
-	| dict key value start end more colonPos fieldDelims lastKey keyValueDelim |
+	| dict key value start end more colonPos fieldDelims lastKey keyValueDelim crlf |
 	dict _ Dictionary new.
+	crlf _ String crlf.
 	string isEmptyOrNil ifTrue: [^dict].
-	fieldDelims _ String crlf asCharacterSet.
+	fieldDelims _ crlf asCharacterSet.
 	keyValueDelim _ $:.
 	more _ true.
 	start _ end _ 1.
@@ -146,16 +147,16 @@ HttpRequest class >> parseHttpHeader: string [
 					[colonPos _ string indexOf: keyValueDelim startingAt: start.
 					(colonPos > end or: [colonPos == 0])
 						ifTrue:
-							[key _ (string copyFrom: start to: end) asLowercase.
+							[key _ (string copyFrom: start to: end) translateToLowercase.
 							value _ '']
 						ifFalse:
-							[key _ (string copyFrom: start to: colonPos-1) asLowercase.
+							[key _ (string copyFrom: start to: colonPos-1) translateToLowercase.
 							value _ (string copyFrom: colonPos+1 to: end) withBlanksTrimmed]].
 			key isEmpty
 				ifFalse: [dict at: key put: value.
 					lastKey _ key.
 					key _ ''].
-			start _ string skipDelimiters: String crlf startingAt: end+1].
+			start _ string skipDelimiters: crlf startingAt: end+1].
 	more] whileTrue.
 
 	^dict
@@ -500,7 +501,6 @@ HttpRequest >> multipartFormFieldsDo: aBlock [
 	| mChunk aFieldValue |
 	(self method = 'POST' and: [self contentType = MIMEDocument contentTypeMultipart])
 		ifFalse: [^nil].
-
 	stream peekForAll: self multipartBoundary.
 	[stream atEnd or: [stream peekForAll: '--']] whileFalse:
 		[stream next: 2.  "Advance over CRLF"
@@ -513,7 +513,8 @@ HttpRequest >> multipartFormFieldsDo: aBlock [
 				[aFieldValue := String streamContents: 
 					[:aStream |
 					mChunk saveToStream: aStream].
-				self postFields at: mChunk fieldName put: aFieldValue]]]
+				self postFields at: mChunk fieldName put: aFieldValue]]].
+	stream next: 2 "Advance over CRLF"
 ]
 
 { #category : #accessing }
