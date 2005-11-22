@@ -160,9 +160,11 @@ ComancheModule >> processVisitor: aKomModuleVisitor [
 
 { #category : #'start-stop' }
 ComancheModule >> stop [
-	"Let all my sub modules stop."
+	"Let all my sub modules stop,
+	if they respond to #stop."
 
-	self subModulesDo: [:m | m stop]
+	self subModulesDo: [:m |
+		(m respondsTo: #stop) ifTrue: [m stop]]
 ]
 
 { #category : #accessing }
