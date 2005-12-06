@@ -43,8 +43,16 @@ Class {
 { #category : #registration }
 ApplicationService class >> addService: aService [
 
-	self services add: aService
+	self allServices add: aService
 
+]
+
+{ #category : #accessing }
+ApplicationService class >> allServices [
+	"Return all registered services.
+	Do not override this methid, override services instead."
+
+	^Services
 ]
 
 { #category : #accessing }
@@ -71,7 +79,7 @@ ApplicationService class >> newNamed: aString [
 { #category : #registration }
 ApplicationService class >> removeService: aService [
 
-	self services remove: aService ifAbsent: []
+	self allServices remove: aService ifAbsent: []
 
 ]
 
@@ -79,14 +87,25 @@ ApplicationService class >> removeService: aService [
 ApplicationService class >> serviceNamed: aString [
 
 	^self services 
+		serviceNamed: aString
+		ifAbsent: [self error: 'No service by that name']
+]
+
+{ #category : #accessing }
+ApplicationService class >> serviceNamed: aString ifAbsent: aBlock [
+
+	^self services 
 		detect: [ :ea | ea name = aString ] 
-		ifNone: [self error: 'No service by that name']
+		ifNone: aBlock
 ]
 
 { #category : #accessing }
 ApplicationService class >> services [
+	"Return all registered services. Override this method
+	in subclasses to provide specialized or partial lists
+	of services."
 
-	^Services
+	^ self allServices
 ]
 
 { #category : #accessing }

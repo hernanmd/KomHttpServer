@@ -69,6 +69,26 @@ TcpService class >> on: portNumber priority: priorityNum [
 
 ]
 
+{ #category : #accessing }
+TcpService class >> serviceOnPort: portNumber [
+	^ self serviceOnPort: portNumber
+		ifAbsent: [self error: 'No service on that port']
+]
+
+{ #category : #accessing }
+TcpService class >> serviceOnPort: portNumber ifAbsent: aBlock [
+	^ self services
+		detect: [:service | service portNumber = portNumber]
+		ifNone: aBlock
+]
+
+{ #category : #accessing }
+TcpService class >> services [
+	"Return all registered TcpServices."
+
+	^ super services select: [:service | service isKindOf: TcpService]
+]
+
 { #category : #'instance creation' }
 TcpService class >> startOn: portNumber [
 
@@ -187,7 +207,7 @@ TcpService >> unassignPort [
 
 { #category : #conversation }
 TcpService >> value: aSocket [
-	"This method is invoked by the ComancheListener"
+	"This method is invoked by the TcpListener"
 
 	[self serve: aSocket] newProcessWithClampedBindings
 		name: (self name, ' connection');
