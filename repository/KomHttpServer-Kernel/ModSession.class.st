@@ -37,12 +37,10 @@ Class {
 	#name : #ModSession,
 	#superclass : #ComancheModule,
 	#instVars : [
-		'scheduler',
 		'sessions',
 		'mutex',
 		'lastCleanup',
-		'secondsToLive',
-		'target'
+		'secondsToLive'
 	],
 	#category : #'KomHttpServer-Modules'
 }
@@ -59,19 +57,26 @@ ModSession >> basicExtractSession: aRequest ifAbsent: absentBlock [
 ]
 
 { #category : #private }
+ModSession >> checkForCleanup [
+	"PRIVATE: run the cleanup if the last cleanup was more than
+	1 minute ago"
+
+	lastCleanup + 60 < Time totalSeconds
+		ifTrue: [self cleanup]
+]
+
+{ #category : #private }
 ModSession >> cleanup [
 	"PRIVATE: iterate over all sessions and remove stale ones"
 
 	| session cutoff |
-	mutex critical: [
-		lastCleanup := Time totalSeconds.
-		cutoff := lastCleanup - secondsToLive.
-		sessions keys do: 
-			[:key | 
-			session _ sessions at: key.
-			(session lastAccess < cutoff) ifTrue: 
-				[target sessionTimedOut: session.
-				sessions removeKey: key]]]
+	lastCleanup := Time totalSeconds.
+	cutoff := lastCleanup - secondsToLive.
+	sessions keys do: 
+		[:key | 
+		session _ sessions at: key.
+		(session lastAccess < cutoff) ifTrue: 
+			[sessions removeKey: key]]
 ]
 
 { #category : #private }
@@ -79,7 +84,8 @@ ModSession >> extractSession: aRequest [
 	"<KomSession> extract or create a session for aRequest"
 	| session |
 	mutex critical: 
-		[session _ self 
+		[self checkForCleanup.
+		session _ self 
 					basicExtractSession: aRequest 
 					ifAbsent: [self newSession].
 		session touch].
@@ -90,9 +96,6 @@ ModSession >> extractSession: aRequest [
 ModSession >> initialize [
 	super initialize.
 	
-	scheduler _ TaskScheduler new.
-	scheduler start.
-	scheduler do: [self cleanup] every: 1 minute.
 	sessions := Dictionary new.
 	mutex := Semaphore forMutualExclusion.
 	lastCleanup := Time totalSeconds.
@@ -140,18 +143,4 @@ ModSession >> sessionsDo: aBlock [
 	"Iterate over sessions."
 
 	^ sessions valuesDo: aBlock
-]
-
-{ #category : #'start-stop' }
-ModSession >> stop [
-	"Stop the scheduler."
-	
-	scheduler stop.
-	scheduler _ nil
-]
-
-{ #category : #accessing }
-ModSession >> target: anObject [
-
-	target _ anObject
 ]

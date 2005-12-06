@@ -68,10 +68,10 @@ HttpRequest class >> decodeUrlEncodedForm: string multipleValues: boolean [
 		ifFalse: [end _ end - 1].
 	eqSignPos _ string indexOf: $= startingAt: start.
 	(eqSignPos > end or: [eqSignPos == 0])
-		ifTrue: [key _ (key _ string copyFrom: start to: end) unescapePercents utf8ToIso isoToSqueak.
+		ifTrue: [key _ (key _ string copyFrom: start to: end) unescapePercents.
 			value _ '']
-		ifFalse: [key _ (key _ string copyFrom: start to: eqSignPos-1) unescapePercents utf8ToIso isoToSqueak.
-			value _ (value _ string copyFrom: eqSignPos+1 to: end) unescapePercents utf8ToIso isoToSqueak].
+		ifFalse: [key _ (key _ string copyFrom: start to: eqSignPos-1) unescapePercents.
+			value _ (value _ string copyFrom: eqSignPos+1 to: end) unescapePercents].
 	self addKey: key value: value toForm: dict multipleValues: boolean.
 	start _ end + 2.
 	more] whileTrue.
@@ -680,9 +680,23 @@ HttpRequest >> readRequestHeaderFrom: aStream [
 	| reqHeader |
 	reqHeader _ ReadStream on: 
 		(aStream upToAll: self endOfRequestHeaderMarker).
-	self initStatusString: (reqHeader upToAll: String crlf).
+	self initStatusString: (self readStatusStringFrom: reqHeader).
 	self header: (self class parseHttpHeader: reqHeader upToEnd).
 	self rawPostFields. "force reading/parsing post fields"
+]
+
+{ #category : #'initialize-release' }
+HttpRequest >> readStatusStringFrom: aStream [
+	"RFC 2068 says in section 4.1 (Message Types) that 'In the interest of
+	robustness, servers SHOULD ignore any empty line(s) received where
+	a Request-Line is expected', so we ignore any leading CR/LF's"
+	
+	| status |
+	status _ ''.
+	[status isEmpty and: [aStream atEnd not]]
+		whileTrue: [status _ aStream upToAll: String crlf].
+		
+	^ status
 ]
 
 { #category : #accessing }

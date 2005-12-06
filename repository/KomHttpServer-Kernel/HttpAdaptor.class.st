@@ -107,9 +107,8 @@ HttpAdaptor class >> readAndWriteToSocket: aSocket service: httpService [
 
 	^self 
 		readAndWriteTo: 
-			((FastSocketStream on: aSocket)
+			((SocketStream on: aSocket)
 				timeout: self dataTimeout;
-"				noTimeout;"
 				autoFlush: false;
 				yourself)
 		service: httpService

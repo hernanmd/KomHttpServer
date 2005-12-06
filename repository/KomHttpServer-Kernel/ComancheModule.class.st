@@ -10,6 +10,12 @@ Class {
 	#category : #'KomHttpServer-Modules'
 }
 
+{ #category : #'as yet unclassified' }
+ComancheModule class >> new [
+
+	^super new initialize
+]
+
 { #category : #accessing }
 ComancheModule class >> version [
 	"Answer a version string...subclasses that override this method will
@@ -156,15 +162,6 @@ ComancheModule >> processSubModules [
 ComancheModule >> processVisitor: aKomModuleVisitor [
 
 	^aKomModuleVisitor doComancheModule: self
-]
-
-{ #category : #'start-stop' }
-ComancheModule >> stop [
-	"Let all my sub modules stop,
-	if they respond to #stop."
-
-	self subModulesDo: [:m |
-		(m respondsTo: #stop) ifTrue: [m stop]]
 ]
 
 { #category : #accessing }
