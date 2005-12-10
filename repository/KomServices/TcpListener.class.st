@@ -11,11 +11,11 @@ Instance variables:
 
 Usage:
 
-In the following example, a TcpListener is established on port 8123.  After evaluating the following example, if you open a transcript window and point a web browser to port 8123 of this machine (ie. http://localhost:8123/), you should see several http requests appear in the transcript.
+In the following example, a ComancheListener is established on port 8123.  After evaluating the following example, if you open a transcript window and point a web browser to port 8123 of this machine (ie. http://localhost:8123/), you should see several http requests appear in the transcript.
 
 	| count listener |
 	count _ 0.
-	listener _ TcpListener
+	listener _ ComancheListener 
 		on: 8123
 		handler: 
 			[ :socket |
@@ -24,7 +24,7 @@ In the following example, a TcpListener is established on port 8123.  After eval
 			socket closeAndDestroy].
 	listener forkAndListenWhile: [count < 5].
 
-For an additional example of using TcpListener, see HttpService.
+For an additional example of using ComancheListener, see ComancheNetService.
 
 "
 Class {

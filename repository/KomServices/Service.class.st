@@ -1,9 +1,9 @@
 "
-I am an abstract superclass.  Subclass me to create your own service classes whose instances can be started and stopped.  Subclasses should override the #runWhile: method to do something useful. 
-An instance of an ApplicationService will have a Process associated with it while it is running.  
-If you have the ""Named Process"" package loaded (available on SqueakMap), then processes associated with a ApplicationService will be named like their service name for easier process debugging.
+I am an abstract superclass.  Subclass me to create your own service classes whose instances can be started and stopped.  Subclasses should override the #runWhile: method to do something useful.  An instance of a ComancheService will have a Process associated with it while it is running.  
 
-A ApplicationService can be in one of three states that are determined by the process and condiction instance variables:
+If you have the ""Named Process"" package loaded (available on SqueakMap), then processes associated with a ComancheService will be named like their service name for easier process debugging.
+
+A Service can be in one of three states that are determined by the process and condiction instance variables:
 
 	running: condition == #run & process notNil
 	stopping: condition ~~ #run & process notNil 
@@ -25,7 +25,7 @@ log - not yet implemented
 
 "
 Class {
-	#name : #ApplicationService,
+	#name : #Service,
 	#superclass : #Object,
 	#instVars : [
 		'name',
@@ -41,20 +41,20 @@ Class {
 }
 
 { #category : #registration }
-ApplicationService class >> addService: aService [
+Service class >> addService: aService [
 
 	self services add: aService
 
 ]
 
 { #category : #accessing }
-ApplicationService class >> defaultPriority [
+Service class >> defaultPriority [
 
 	^Processor userBackgroundPriority
 ]
 
 { #category : #initialization }
-ApplicationService class >> initialize [
+Service class >> initialize [
 	"self initialize"
 
 	Services _ Set new.
@@ -63,20 +63,26 @@ ApplicationService class >> initialize [
 ]
 
 { #category : #'instance creation' }
-ApplicationService class >> newNamed: aString [
+Service class >> new [
+
+	^super new initialize
+]
+
+{ #category : #'instance creation' }
+Service class >> newNamed: aString [
 
 	^self new name: aString; yourself
 ]
 
 { #category : #registration }
-ApplicationService class >> removeService: aService [
+Service class >> removeService: aService [
 
 	self services remove: aService ifAbsent: []
 
 ]
 
 { #category : #accessing }
-ApplicationService class >> serviceNamed: aString [
+Service class >> serviceNamed: aString [
 
 	^self services 
 		detect: [ :ea | ea name = aString ] 
@@ -84,34 +90,34 @@ ApplicationService class >> serviceNamed: aString [
 ]
 
 { #category : #accessing }
-ApplicationService class >> services [
+Service class >> services [
 
 	^Services
 ]
 
 { #category : #accessing }
-ApplicationService class >> servicesNamed: aString [
+Service class >> servicesNamed: aString [
 
 	^self services select: [ :ea | ea name = aString ]
 ]
 
 { #category : #snapshots }
-ApplicationService class >> shutDown [
+Service class >> shutDown [
 
 	self services do: 
 		[ :ea | ea prepareForShutdown]
 ]
 
 { #category : #private }
-ApplicationService class >> sleepMethod [
+Service class >> sleepMethod [
 	"This method is used to detect whether or not the 
 	service is currently sleeping"
 
-	^ self methodDict at: #sleepFor:
+	^Service methodDict at: #sleepFor:
 ]
 
 { #category : #snapshots }
-ApplicationService class >> startUp [
+Service class >> startUp [
 
 	self services do: 
 		[ :ea | ea prepareForStartup].
@@ -119,26 +125,26 @@ ApplicationService class >> startUp [
 ]
 
 { #category : #private }
-ApplicationService >> addStopSignal [
+Service >> addStopSignal [
 
 	stopSignal ifNil: [stopSignal _ OrderedCollection new].
 	^stopSignal add: Semaphore new.
 ]
 
 { #category : #accessing }
-ApplicationService >> bindings [
+Service >> bindings [
 
 	^bindings
 ]
 
 { #category : #accessing }
-ApplicationService >> bindings: aDynamicBindings [
+Service >> bindings: aDynamicBindings [
 
 	bindings := aDynamicBindings
 ]
 
 { #category : #'starting and stopping' }
-ApplicationService >> cancelStopRequest [
+Service >> cancelStopRequest [
 	"If the service is currently in a state of stopping, this method
 	will return the service to a state of running"
 
@@ -149,19 +155,22 @@ ApplicationService >> cancelStopRequest [
 ]
 
 { #category : #private }
-ApplicationService >> checkRequiredBindings [
-	| missingBindings |
-	missingBindings := self requiredBindings reject: [ :ea | self bindings includesKey: ea ].
+Service >> checkRequiredBindings [
 
-	missingBindings notEmpty 
-		ifTrue: 
-			[self error: 'service is missing one or more required bindings'.
-			^false].
+	| missingBindings |
+	missingBindings := Set new.
+	self requiredBindings do:
+		[ :ea |
+		(self bindings includesKey: ea) ifFalse: 
+			[missingBindings add: ea]].
+	missingBindings notEmpty ifTrue:
+		[self error: 'service is missing one or more required bindings'.
+		^false].
 	^true
 ]
 
 { #category : #accessing }
-ApplicationService >> defaultName [
+Service >> defaultName [
 
 	| title |
 	title := self class name.
@@ -169,20 +178,20 @@ ApplicationService >> defaultName [
 ]
 
 { #category : #accessing }
-ApplicationService >> defaultPriority [
+Service >> defaultPriority [
 
 	^self class defaultPriority
 ]
 
 { #category : #'initialize-release' }
-ApplicationService >> initialize [
-	super initialize.
+Service >> initialize [
 	self register.
-	self initializeBindings
+	self initializeBindings.
+
 ]
 
 { #category : #'initialize-release' }
-ApplicationService >> initializeBindings [
+Service >> initializeBindings [
 	"Subclasses may wish to establish an isolated set of dynamic
 	bindings by overriding this method.  A subclass may also want
 	to go ahead and set some dynamic variables.  For example:
@@ -203,13 +212,13 @@ ApplicationService >> initializeBindings [
 ]
 
 { #category : #queries }
-ApplicationService >> isRunning [
+Service >> isRunning [
 
 	^process notNil and: [stopSignal isNil]
 ]
 
 { #category : #queries }
-ApplicationService >> isSleeping [
+Service >> isSleeping [
 
 	process ifNil: [^false].
 	process suspendedContext ifNotNilDo: 
@@ -222,20 +231,20 @@ ApplicationService >> isSleeping [
 ]
 
 { #category : #queries }
-ApplicationService >> isStopped [
+Service >> isStopped [
 
 	^process isNil
 
 ]
 
 { #category : #queries }
-ApplicationService >> isStopping [
+Service >> isStopping [
 
 	^process notNil and: [stopSignal notNil]
 ]
 
 { #category : #'starting and stopping' }
-ApplicationService >> kill [
+Service >> kill [
 	"Forcibly kill the service regardless of whether it is in a state where it is 
 	safe to do so.  Use stop unless the service is not responding."
 
@@ -245,30 +254,30 @@ ApplicationService >> kill [
 ]
 
 { #category : #accessing }
-ApplicationService >> name [
+Service >> name [
 
 	^name ifNil: [self defaultName]
 ]
 
 { #category : #accessing }
-ApplicationService >> name: aString [
+Service >> name: aString [
 
 	name := aString.
 	process ifNotNil: [process name: aString].
 ]
 
 { #category : #'startup and shutdown' }
-ApplicationService >> prepareForShutdown [
+Service >> prepareForShutdown [
 	"The system is about to shutdown"
 ]
 
 { #category : #'startup and shutdown' }
-ApplicationService >> prepareForStartup [
+Service >> prepareForStartup [
 	"The system just started up"
 ]
 
 { #category : #printing }
-ApplicationService >> printOn: aStream [
+Service >> printOn: aStream [
 	aStream nextPutAll: self name.
 	self isRunning ifTrue: [aStream nextPutAll: ' [running]'].
 	self isStopping ifTrue: [aStream nextPutAll: ' [stopping]'].
@@ -276,26 +285,26 @@ ApplicationService >> printOn: aStream [
 ]
 
 { #category : #accessing }
-ApplicationService >> priority [
+Service >> priority [
 
 	^priority ifNil: [self defaultPriority]
 ]
 
 { #category : #accessing }
-ApplicationService >> priority: aNumber [
+Service >> priority: aNumber [
 
 	priority := aNumber.
 	process ifNotNil: [process priority: aNumber].
 ]
 
 { #category : #accessing }
-ApplicationService >> process [
+Service >> process [
 
 	^process
 ]
 
 { #category : #private }
-ApplicationService >> processTerminated [
+Service >> processTerminated [
 	"Private.  Nils out the process inst var (indication that the service is
 	stopped and signals any processes that are waiting on the service to 
 	stop."
@@ -306,13 +315,13 @@ ApplicationService >> processTerminated [
 ]
 
 { #category : #registration }
-ApplicationService >> register [
+Service >> register [
 
 	self class addService: self
 ]
 
 { #category : #private }
-ApplicationService >> releaseProcessesWaitingForStop [
+Service >> releaseProcessesWaitingForStop [
 	"Private.  Signals any processes that are waiting on the service to stop."
 
 	| tmp |
@@ -323,7 +332,7 @@ ApplicationService >> releaseProcessesWaitingForStop [
 ]
 
 { #category : #accessing }
-ApplicationService >> requiredBindings [
+Service >> requiredBindings [
 	"Subclasses may wish to override this method to provide a list of objects 
 	that the service requires to be registered in its dynamic bindings.  When
 	attempting to start a service that has required bindings, if any of the 
@@ -334,7 +343,7 @@ ApplicationService >> requiredBindings [
 ]
 
 { #category : #running }
-ApplicationService >> runWhile: aBlock [
+Service >> runWhile: aBlock [
 	"subclasses should perform whatever service they provide
 	in a loop that doesn't return until aBlock evaluates to true"
 
@@ -348,7 +357,7 @@ ApplicationService >> runWhile: aBlock [
 	happen immediately while the service is sleeping; if you
 	just use a Delay directly, then graceful shutdown cannot
 	happen until after the delay completes.  To test this behavior
-	start a service using Service newNamed: 'sleep test' 
+	start a service using ComancheService newNamed: 'sleep test' 
 	and then use the Star Browser interface to start and stop the service
 	(note: you can allow graceful termination during any block of 
 	code using Process class>>terminationOkDuring:)."
@@ -358,7 +367,7 @@ ApplicationService >> runWhile: aBlock [
 ]
 
 { #category : #utility }
-ApplicationService >> sleepFor: milliseconds [
+Service >> sleepFor: milliseconds [
 	"If your service sleeps, use this method as it will indicate that it is
 	safe to immediately terminate the process while it is sleeping."
 
@@ -368,22 +377,19 @@ ApplicationService >> sleepFor: milliseconds [
 ]
 
 { #category : #'starting and stopping' }
-ApplicationService >> start [
+Service >> start [
 	self verifyOkToStart ifFalse: [^self].
 	process := 
-			[
-			[self 
-				runWhile: [stopSignal isNil and: [process == Processor activeProcess]]] 
-					ensure: [self processTerminated]] 
+			[[self runWhile: [stopSignal isNil and: [process == Processor activeProcess]]] 
+				ensure: [self processTerminated]] 
 					newProcessWithBindings: self bindings.
-	process 
-		name: self name;
-		priority: self priority;
-		resume
+	(process respondsTo: #name:) ifTrue: [process name: self name].
+	process priority: self priority.
+	process resume
 ]
 
 { #category : #'starting and stopping' }
-ApplicationService >> stop [
+Service >> stop [
 	"Gracefully request the service to stop.  This method returns immediately.  If
 	you wish to wait until the service has stopped, follow this method with #waitForStop
 	or #waitForStopUntil:."
@@ -394,7 +400,7 @@ ApplicationService >> stop [
 ]
 
 { #category : #private }
-ApplicationService >> stopSignal [
+Service >> stopSignal [
 	"<Semaphore | nil> Indicates whether the associated process should 
 	be in the process of shutting down.  The semaphore will be signaled
 	for all waiting process when the service thinks it has stopped (note,
@@ -406,24 +412,26 @@ ApplicationService >> stopSignal [
 ]
 
 { #category : #registration }
-ApplicationService >> unregister [
+Service >> unregister [
 
 	self stop.
 	self class removeService: self
 ]
 
 { #category : #private }
-ApplicationService >> verifyOkToStart [
+Service >> verifyOkToStart [
+
 	self isRunning ifTrue: [^false].
-	self isStopping 
-		ifTrue: 
-			[self error: 'Service is in the process of stopping'.
-			^false].
-	^ self checkRequiredBindings
+	self isStopping ifTrue: 
+		[self error: 'Service is in the process of stopping'.
+		^false].
+	self checkRequiredBindings ifFalse: [^false].
+	^true
+
 ]
 
 { #category : #'starting and stopping' }
-ApplicationService >> waitForStop [
+Service >> waitForStop [
 	"Wait until the service is stopped"
 
 	self isStopped ifTrue: [^self].
@@ -433,7 +441,7 @@ ApplicationService >> waitForStop [
 ]
 
 { #category : #'starting and stopping' }
-ApplicationService >> waitForStopUntil: deadline [ 
+Service >> waitForStopUntil: deadline [ 
 	"Wait until the service is stopped or the deadline is reached"
 
 	self isStopped ifTrue: [^self].
@@ -444,7 +452,7 @@ ApplicationService >> waitForStopUntil: deadline [
 ]
 
 { #category : #utility }
-ApplicationService >> withBindingsDo: aBlock [
+Service >> withBindingsDo: aBlock [
 
 	^aBlock valueWithBindings: self bindings
 ]
