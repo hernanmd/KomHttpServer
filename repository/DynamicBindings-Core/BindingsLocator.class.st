@@ -9,3 +9,25 @@ Class {
 	],
 	#category : #'DynamicBindings-Core'
 }
+
+{ #category : #exceptionDescription }
+BindingsLocator >> defaultAction [
+	"Finds the root context for the active stack, then installs a new
+	handler context that will answer the context containing the root 
+	environment.  This method depends on the implementation of
+	#valueWithBindings:."
+
+	| tmp defaultActionCtx |
+	tmp _ thisContext.
+	[tmp sender notNil] whileTrue: [tmp _ tmp sender].
+
+	defaultActionCtx _ thisContext.
+	[	
+		tmp swapSender: thisContext sender.
+		thisContext sender sender sender swapSender: nil.
+		thisContext swapSender: defaultActionCtx.
+	] valueWithBindings: DynamicBindings root.
+
+	^tmp sender sender sender
+
+]

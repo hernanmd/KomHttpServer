@@ -111,10 +111,40 @@ DynamicBindings class >> example [
 
 ]
 
+{ #category : #'class initialization' }
+DynamicBindings class >> initialize [
+	"self initialize"
+
+	Root 
+		ifNil: [Root _ DynamicBindings new]
+		ifNotNil: [Root _ DynamicBindings newFrom: Root].
+
+]
+
+{ #category : #'instance creation' }
+DynamicBindings class >> newFrom: anotherRuntimeEnvironment [
+
+	| answer |
+	answer _ self new.
+	anotherRuntimeEnvironment associationsDo: [ :assn | answer add: assn].
+	^answer
+]
+
 { #category : #accessing }
 DynamicBindings class >> root [
 
 	^Root
+]
+
+{ #category : #accessing }
+DynamicBindings >> at: key ifAbsent: aBlock [
+
+	| assoc tmp |
+	tmp := self.
+	[(assoc _ tmp array at: (tmp findElementOrNil: key)) == nil] 
+		whileTrue: [(tmp := tmp parent) ifNil: [^aBlock value]].
+	^assoc value
+
 ]
 
 { #category : #accessing }
