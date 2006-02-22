@@ -28,9 +28,9 @@ Class {
 		'postProcessors'
 	],
 	#classVars : [
+		'LastTimeStamp',
 		'LastTimeStampTime',
-		'TimezoneOffset',
-		'LastTimeStamp'
+		'TimezoneOffset'
 	],
 	#category : #'KomHttpServer-Protocol'
 }
@@ -104,14 +104,24 @@ HttpAdaptor class >> readAndWriteTo: aStream service: httpService [
 
 { #category : #'instance creation' }
 HttpAdaptor class >> readAndWriteToSocket: aSocket service: httpService [
+	"Wrap the socket in a suitable SocketStream implementation
+	using appropriate options for timeout etc and start the conversation."
 
 	^self 
 		readAndWriteTo: 
-			((SocketStream on: aSocket)
+			((self socketStream on: aSocket)
 				timeout: self dataTimeout;
 				autoFlush: false;
 				yourself)
 		service: httpService
+]
+
+{ #category : #socketstream }
+HttpAdaptor class >> socketStream [
+	"Returns the correct class to use. If FastSocketStream is available we use it,
+	otherwise we use SocketStream."
+
+	Smalltalk at: #FastSocketStream ifAbsent: [SocketStream] 
 ]
 
 { #category : #timestamp }
