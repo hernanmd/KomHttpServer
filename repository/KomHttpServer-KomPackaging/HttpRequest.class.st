@@ -24,8 +24,8 @@ Class {
 		'properties'
 	],
 	#classVars : [
-		'HttpStatusCodeDict',
-		'EndOfRequestHeaderMarker'
+		'EndOfRequestHeaderMarker',
+		'HttpStatusCodeDict'
 	],
 	#category : #'KomHttpServer-Protocol'
 }
