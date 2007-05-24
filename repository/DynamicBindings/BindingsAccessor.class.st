@@ -17,13 +17,13 @@ Class {
 	#classVars : [
 		'Default'
 	],
-	#category : #DynamicBindings
+	#category : #'DynamicBindings-Core'
 }
 
 { #category : #'class initialization' }
 BindingsAccessor class >> default [
 
-	^Default ifNil: [Default _ self new]
+	^Default ifNil: [Default := self new]
 ]
 
 { #category : #'class initialization' }

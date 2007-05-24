@@ -68,7 +68,7 @@ Version 1.0:
 Class {
 	#name : #DynamicBindingsInfo,
 	#superclass : #ProtoObject,
-	#category : #DynamicBindings
+	#category : #'DynamicBindings-Core'
 }
 
 { #category : #'as yet unclassified' }

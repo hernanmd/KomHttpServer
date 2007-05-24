@@ -4,7 +4,7 @@ I test the DynamicBindings subsystem.
 Class {
 	#name : #DynamicBindingTests,
 	#superclass : #TestCase,
-	#category : #DynamicBindings
+	#category : #'DynamicBindings-Core'
 }
 
 { #category : #'as yet unclassified' }
@@ -24,7 +24,7 @@ DynamicBindingTests >> testAccessor2 [
 
 	| val test1 test2 |
 	Bindings clamp:
-		[#test binding: (val _ 'Test Value').
+		[#test binding: (val := 'Test Value').
 		test1 := (#test binding == val).
 		#test removeBinding.
 		test2 := ((Bindings at: #test ifAbsent: [ 'absent' ]) = 'absent')].
