@@ -57,7 +57,7 @@ Service class >> defaultPriority [
 Service class >> initialize [
 	"self initialize"
 
-	Services _ Set new.
+	Services := Set new.
 	Smalltalk addToStartUpList: self.
 	Smalltalk addToShutDownList: self
 ]
@@ -127,7 +127,7 @@ Service class >> startUp [
 { #category : #private }
 Service >> addStopSignal [
 
-	stopSignal ifNil: [stopSignal _ OrderedCollection new].
+	stopSignal ifNil: [stopSignal := OrderedCollection new].
 	^stopSignal add: Semaphore new.
 ]
 
