@@ -30,8 +30,8 @@ Class {
 		'mode'
 	],
 	#classVars : [
-		'ServerType',
-		'ServerHostName'
+		'ServerHostName',
+		'ServerType'
 	],
 	#category : #'KomHttpServer-Kernel'
 }
@@ -58,7 +58,7 @@ HttpService class >> initialize [
 HttpService class >> initializeServerType [
 	"self initializeServerType"
 
-	ServerType _ String streamContents:
+	ServerType := String streamContents:
 		[ :s |
 		s nextPutAll: 'Comanche/'.
 		s nextPutAll: self version.
@@ -75,7 +75,7 @@ HttpService class >> initializeServerType [
 { #category : #accessing }
 HttpService class >> platform [
 
-	^Smalltalk platformName
+	^SmalltalkImage current platformName
 ]
 
 { #category : #accessing }
@@ -91,11 +91,10 @@ HttpService class >> version [
 ]
 
 { #category : #'error handling' }
-HttpService >> detailedErrorResponseStatus: aSymbol exception: anException [
-
-	^self
-		errorResponseStatus: aSymbol
-		description: ('<pre><b>', anException description, '</b><br><br>', anException initialContext longStack, '</pre>')
+HttpService >> detailedErrorResponseStatus: aSymbol exception: anException [ 
+	^self errorResponseStatus: aSymbol
+		description: '<pre><b>' , anException description , '</b><br><br>' 
+				, anException signalerContext longStack , '</pre>'
 ]
 
 { #category : #'error handling' }
@@ -213,7 +212,7 @@ HttpService >> mode: aSymbol [
 	"aSymbol <#deployment | #debug | #verbose > - Sets the debugging
 	mode of the receiver."
 
-	mode _ aSymbol
+	mode := aSymbol
 ]
 
 { #category : #pluggable }
@@ -250,7 +249,7 @@ HttpService >> perceivedHostName [
 	on the server."
 
 	| request |
-	(request _ HttpRequest current) ifNotNil: 
+	(request := HttpRequest current) ifNotNil: 
 		[^request networkHost nameString].
 
 	^self serverHostName
@@ -267,7 +266,7 @@ HttpService >> perceivedPortNumber [
 	listening on."
 
 	| request |
-	(request _ HttpRequest current) ifNotNil: 
+	(request := HttpRequest current) ifNotNil: 
 		[^request networkHost port].
 
 	^self portNumber
@@ -283,13 +282,13 @@ HttpService >> plug [
 { #category : #pluggable }
 HttpService >> plug: aMonadicValuable [
 
-	plug _ aMonadicValuable
+	plug := aMonadicValuable
 ]
 
 { #category : #'startup and shutdown' }
 HttpService >> prepareForStartup [
 
-	ServerHostName _ nil.
+	ServerHostName := nil.
 	self class initializeServerType.
 ]
 
@@ -305,12 +304,9 @@ HttpService >> processHttpRequest: anHttpRequest [
 ]
 
 { #category : #serving }
-HttpService >> serve: aSocket [
-
-	HttpService current: self.
-	HttpAdaptor
-		readAndWriteToSocket: aSocket
-		service: self
+HttpService >> serve: aSocket [ 
+	self class current: self.
+	HttpAdaptor readAndWriteToSocket: aSocket service: self
 ]
 
 { #category : #configuration }
@@ -338,7 +334,7 @@ HttpService >> serverHostName [
 	is started"
 
 	^ServerHostName ifNil:
-		[ServerHostName _ NetNameResolver 
+		[ServerHostName := NetNameResolver 
 								nameForAddress: NetNameResolver localHostAddress 
 								timeout: 5]
 
