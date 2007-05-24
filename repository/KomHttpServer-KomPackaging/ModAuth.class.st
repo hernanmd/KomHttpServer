@@ -55,7 +55,7 @@ ModAuth >> authDb: anAuthDb [
 ModAuth >> authorizationResponse [
 
 	| answer |
-	answer _ HttpResponse
+	answer := HttpResponse
 		status: #unauthorized
 		contents: 'Authentication Required'.
 	answer fieldAt: 'WWW-Authenticate' put: 'Basic realm="', self realm,'"'.
@@ -74,9 +74,9 @@ ModAuth >> decodeAuthorization: aString [
 ModAuth >> extractAuthInfo: request andDo: aBlock [ 
 
 	| authHeader user pass |
-	(authHeader _ self extractAuthorization: request) ifNil: [^self].
-	user _ self extractUser: authHeader.
-	pass _ self extractPassword: authHeader.
+	(authHeader := self extractAuthorization: request) ifNil: [^self].
+	user := self extractUser: authHeader.
+	pass := self extractPassword: authHeader.
 	(user isNil or: [pass isNil]) ifTrue: [^self].
 	^aBlock value: user value: pass
 
@@ -106,7 +106,7 @@ ModAuth >> extractUser: auth [
 ModAuth >> processHttp [
 
 	| request |
-	request _ HttpRequest current.
+	request := HttpRequest current.
 	self extractAuthInfo: request andDo: 
 		[ :user :password | 
 		(self verifyPassword: password forUser: user)
@@ -127,7 +127,7 @@ ModAuth >> realm [
 { #category : #accessing }
 ModAuth >> realm: aString [
 
-	realm _ aString
+	realm := aString
 ]
 
 { #category : #'as yet unclassified' }

@@ -59,22 +59,22 @@ HttpRequest class >> decodeUrlEncodedForm: string [
 { #category : #parsing }
 HttpRequest class >> decodeUrlEncodedForm: string multipleValues: boolean [
 	| dict key value start end eqSignPos more |
-	dict _ boolean ifTrue: [HttpFormDictionary new] ifFalse: [Dictionary new].
+	dict := boolean ifTrue: [HttpFormDictionary new] ifFalse: [Dictionary new].
 	string isEmptyOrNil ifTrue: [^dict].
-	more _ true.
-	start _ 1.
-	[end _ string indexOf: $& startingAt: start.
+	more := true.
+	start := 1.
+	[end := string indexOf: $& startingAt: start.
 	end == 0
-		ifTrue: [end _ string size. more _ false]
-		ifFalse: [end _ end - 1].
-	eqSignPos _ string indexOf: $= startingAt: start.
+		ifTrue: [end := string size. more := false]
+		ifFalse: [end := end - 1].
+	eqSignPos := string indexOf: $= startingAt: start.
 	(eqSignPos > end or: [eqSignPos == 0])
-		ifTrue: [key _ (key _ string copyFrom: start to: end) unescapePercents.
-			value _ '']
-		ifFalse: [key _ (key _ string copyFrom: start to: eqSignPos-1) unescapePercents.
-			value _ (value _ string copyFrom: eqSignPos+1 to: end) unescapePercents].
+		ifTrue: [key := (key := string copyFrom: start to: end) unescapePercents.
+			value := '']
+		ifFalse: [key := (key := string copyFrom: start to: eqSignPos-1) unescapePercents.
+			value := (value := string copyFrom: eqSignPos+1 to: end) unescapePercents].
 	self addKey: key value: value toForm: dict multipleValues: boolean.
-	start _ end + 2.
+	start := end + 2.
 	more] whileTrue.
 
 	^dict
@@ -119,7 +119,7 @@ HttpRequest class >> hashPassword: aPassword [
 
 { #category : #'initialize-release' }
 HttpRequest class >> initialize [
-	EndOfRequestHeaderMarker _ String crlf, String crlf
+	EndOfRequestHeaderMarker := String crlf, String crlf
 ]
 
 { #category : #'instance creation' }
@@ -131,17 +131,17 @@ HttpRequest class >> new [
 { #category : #parsing }
 HttpRequest class >> parseHttpHeader: string [
 	| dict key value start end more colonPos fieldDelims lastKey keyValueDelim |
-	dict _ Dictionary new.
+	dict := Dictionary new.
 	string isEmptyOrNil ifTrue: [^dict].
-	fieldDelims _ String crlf asCharacterSet.
-	keyValueDelim _ $:.
-	more _ true.
-	start _ end _ 1.
-	lastKey _ ''.
-	[end _ string indexOfAnyOf: fieldDelims startingAt: start.
+	fieldDelims := String crlf asCharacterSet.
+	keyValueDelim := $:.
+	more := true.
+	start := end := 1.
+	lastKey := ''.
+	[end := string indexOfAnyOf: fieldDelims startingAt: start.
 	end == 0
-		ifTrue: [end _ string size. more _ false]
-		ifFalse: [end _ end - 1].
+		ifTrue: [end := string size. more := false]
+		ifFalse: [end := end - 1].
 	(end >= start and: [start < string size])
 		ifTrue: [
 			(string at: start) isSeparator
@@ -150,19 +150,19 @@ HttpRequest class >> parseHttpHeader: string [
 						at: lastKey
 						modify: [:item | item, (string copyFrom: start to: end)]]
 				ifFalse:
-					[colonPos _ string indexOf: keyValueDelim startingAt: start.
+					[colonPos := string indexOf: keyValueDelim startingAt: start.
 					(colonPos > end or: [colonPos == 0])
 						ifTrue:
-							[key _ (string copyFrom: start to: end) asLowercase.
-							value _ '']
+							[key := (string copyFrom: start to: end) asLowercase.
+							value := '']
 						ifFalse:
-							[key _ (string copyFrom: start to: colonPos-1) asLowercase.
-							value _ (string copyFrom: colonPos+1 to: end) withBlanksTrimmed]].
+							[key := (string copyFrom: start to: colonPos-1) asLowercase.
+							value := (string copyFrom: colonPos+1 to: end) withBlanksTrimmed]].
 			key isEmpty
 				ifFalse: [dict at: key put: value.
-					lastKey _ key.
-					key _ ''].
-			start _ string skipDelimiters: String crlf startingAt: end+1].
+					lastKey := key.
+					key := ''].
+			start := string skipDelimiters: String crlf startingAt: end+1].
 	more] whileTrue.
 
 	^dict
@@ -199,9 +199,9 @@ HttpRequest >> contentLength [
 HttpRequest >> contentType [
 	| i contentType |
 	^self propertyAt: #contentType ifAbsentPut: [
-		contentType _ self header at: 'content-type' ifAbsent: [self defaultContentType].
-		contentType ifNotNil: [i _ contentType indexOf: $;. "get rid of charset field"
-			i > 0 ifTrue: [contentType _ contentType copyFrom: 1 to: i-1]].
+		contentType := self header at: 'content-type' ifAbsent: [self defaultContentType].
+		contentType ifNotNil: [i := contentType indexOf: $;. "get rid of charset field"
+			i > 0 ifTrue: [contentType := contentType copyFrom: 1 to: i-1]].
 		contentType asLowercase]
 ]
 
@@ -243,7 +243,7 @@ HttpRequest >> defaultUrl [
 { #category : #'initialize-release' }
 HttpRequest >> destroy [
 	stream close.
-	stream _ nil
+	stream := nil
 ]
 
 { #category : #accessing }
@@ -257,7 +257,7 @@ HttpRequest >> fields [
 
 	| tmp |
 	^self propertyAt: #fields ifAbsentPut:
-		[tmp _ self getFields copy.
+		[tmp := self getFields copy.
 		self postFields associationsDo: [ :assn | tmp add: assn].
 		tmp]
 
@@ -279,7 +279,7 @@ HttpRequest >> getFields [
 	"retrieve fields encoded in the URL: http://aha/ha?a=1&b=2"
 	| in |
 	^self propertyAt: #getFields ifAbsentPut: [
-		((in _ rawUrl indexOf: $?) > 0) ifTrue: [
+		((in := rawUrl indexOf: $?) > 0) ifTrue: [
 			self class decodeUrlEncodedForm: 
 				(rawUrl copyFrom: (in + 1) to: rawUrl size)
 				multipleValues: self multiValueFormFields
@@ -308,7 +308,7 @@ HttpRequest >> header [
 
 { #category : #accessing }
 HttpRequest >> header: aDict [
-	header _ aDict
+	header := aDict
 ]
 
 { #category : #accessing }
@@ -338,12 +338,12 @@ HttpRequest >> initRemoteAddress [
 { #category : #'initialize-release' }
 HttpRequest >> initStatusString: aString [
 	| statusLine |
-	statusLine _ aString findTokens: ' '.
+	statusLine := aString findTokens: ' '.
 	(statusLine size = 3 or: [statusLine size = 2])
 		ifTrue: 
 			[self method: statusLine first.
-			rawUrl _ statusLine second.
-			url _ (rawUrl copyUpTo: $?) unescapePercents.
+			rawUrl := statusLine second.
+			url := (rawUrl copyUpTo: $?) unescapePercents.
 			url size + 1 < rawUrl size ifTrue: 
 				[self queryString: (rawUrl copyFrom: (url size + 2) to: rawUrl size)].
 			self protocol: statusLine third asUppercase]
@@ -354,12 +354,12 @@ HttpRequest >> initStatusString: aString [
 { #category : #'initialize-release' }
 HttpRequest >> initialize [
 
-	properties _ IdentityDictionary new.
+	properties := IdentityDictionary new.
 ]
 
 { #category : #'initialize-release' }
 HttpRequest >> initializeFromStream: aStream [
-	stream _ aStream.
+	stream := aStream.
 	self initRemoteAddress.
 	self timestamp: Time totalSeconds.
 	self readRequestHeaderFrom: stream.
@@ -382,19 +382,19 @@ HttpRequest >> isPersistent [
 	| proto answer |
 
 	self propertyAt: #persistentConnection ifPresent: [ :x | ^x ].
-	proto _ self protocol.
+	proto := self protocol.
 
 	"If we can't figure out the protocol, default to non-persistent connections"
-	answer _ false.
+	answer := false.
 
 	"For HTTP/1.0, the default is non-persistent connections"
 	proto = 'HTTP/1.0' ifTrue:
-		[answer _ (self header at: 'connection' ifAbsent: ['']) 
+		[answer := (self header at: 'connection' ifAbsent: ['']) 
 			asLowercase = 'keep-alive'].
 
 	"For HTTP/1.1, the default is persistent connections"
 	proto = 'HTTP/1.1' ifTrue:
-		[answer _ (self header at: 'connection' ifAbsent: ['']) 
+		[answer := (self header at: 'connection' ifAbsent: ['']) 
 			asLowercase ~= 'close'].
 
 	self propertyAt: #persistentConnection put: answer.
@@ -418,11 +418,11 @@ HttpRequest >> isPostRequest [
 { #category : #'user authentication' }
 HttpRequest >> isUsername: aUsername password: aPassword [
 	| pwHash cookieUsername cookiePassword |
-	cookieUsername _ self cookies at: #ComancheUsername ifAbsent: [^false].
+	cookieUsername := self cookies at: #ComancheUsername ifAbsent: [^false].
 	cookieUsername = aUsername ifFalse: [^false].
 
-	cookiePassword _ self cookies at: #ComanchePassword ifAbsent: [^false].
-	pwHash _ self hashPassword: aPassword.
+	cookiePassword := self cookies at: #ComanchePassword ifAbsent: [^false].
+	pwHash := self hashPassword: aPassword.
 	^cookiePassword = pwHash asString
 ]
 
@@ -496,8 +496,8 @@ HttpRequest >> multipartBoundary [
 	^self propertyAt: #multipartBoundary ifAbsentPut:
 		[(self contentType beginsWith: MIMEDocument contentTypeMultipart)
 			ifTrue: ["contentType gets lowercased, so access the raw header"
-				str _ header at: 'content-type' ifAbsent: [ '' ].
-				idx _ str indexOf: $=.
+				str := header at: 'content-type' ifAbsent: [ '' ].
+				idx := str indexOf: $=.
 				'--', (str copyFrom: idx + 1 to: str size)]
 			ifFalse: [ nil ]]
 ]
@@ -543,9 +543,9 @@ HttpRequest >> nextChunkHeader [
 	"Read the next multipart data chunk's header"
 
 	| string dict mChunk |
-	string _ stream upToAll: self endOfRequestHeaderMarker.
-	dict _ self class parseHttpHeader: string.
-	mChunk _ MultipartChunk from: dict.
+	string := stream upToAll: self endOfRequestHeaderMarker.
+	dict := self class parseHttpHeader: string.
+	mChunk := MultipartChunk from: dict.
 	mChunk stream: self stream.
 	mChunk multipartBoundary: self multipartBoundary.
 	^mChunk
@@ -554,17 +554,17 @@ HttpRequest >> nextChunkHeader [
 { #category : #private }
 HttpRequest >> parseCookies: aString [ 
 	"PRIVATE: Parse a string in the format:  
-	Cookie: NAME1=OPAQUE_STRING1; NAME2=OPAQUE_STRING2 ..."
+	Cookie: NAME1=OPAQUE:=STRING1; NAME2=OPAQUE:=STRING2 ..."
 	| dict |
-	dict _ Dictionary new.
+	dict := Dictionary new.
 	(aString findTokens: ';')
 		collect: [:pairStr | 
 			| pair | 
-			pair _ pairStr findTokens: '='.
+			pair := pairStr findTokens: '='.
 			pair size = 2
 				ifTrue: [| key value | 
-					key _ pair first withBlanksTrimmed asSymbol.
-					value _ pair second withBlanksTrimmed.
+					key := pair first withBlanksTrimmed asSymbol.
+					value := pair second withBlanksTrimmed.
 					dict at: key put: value]
 				ifFalse: ["self log: 'Cookie invalid pair format: ''' , pairStr , ''''"]].
 	^ dict
@@ -651,10 +651,10 @@ HttpRequest >> protocol: aString [
 HttpRequest >> pvtExtractHeaderDict: lines [
 	| i headerDict |
 
-	headerDict _ Dictionary new.
+	headerDict := Dictionary new.
 	(self pvtFoldLines: lines) do: 
 		[ :line |
-		i _ line indexOf: $:.
+		i := line indexOf: $:.
 		i > 0 ifTrue: 
 			[headerDict
 				at: (line copyFrom: 1 to: i-1) asLowercase 
@@ -668,7 +668,7 @@ HttpRequest >> pvtFoldLines: lineArray [
 	| foldedLines |
 
 	"fold lines that start with spaces into the previous line"
-	foldedLines _ OrderedCollection new.
+	foldedLines := OrderedCollection new.
 	lineArray do: 
 		[ :line |
 		line first isSeparator
@@ -683,8 +683,8 @@ HttpRequest >> pvtFoldLines: lineArray [
 HttpRequest >> pvtGetNextSubHeader [
 	| headerString headerLines |
 
-	headerString _ self stream upToAll: self endOfRequestMarker.
-	headerLines _ headerString findTokens: String crlf.
+	headerString := self stream upToAll: self endOfRequestMarker.
+	headerLines := headerString findTokens: String crlf.
 	^self pvtExtractHeaderDict: headerLines.
 
 ]
@@ -727,7 +727,7 @@ HttpRequest >> rawUrl [
 { #category : #'initialize-release' }
 HttpRequest >> readRequestHeaderFrom: aStream [
 	| reqHeader |
-	reqHeader _ ReadStream on: 
+	reqHeader := ReadStream on: 
 		(aStream upToAll: self endOfRequestHeaderMarker).
 	self initStatusString: (reqHeader upToAll: String crlf).
 	self header: (self class parseHttpHeader: reqHeader upToEnd).
@@ -784,7 +784,7 @@ HttpRequest >> session [
 HttpRequest >> setCookieName: nameString value: valueString expiresDate: expiresDate expiresTime: expiresTime path: pathString domain: domainString secure: secureBoolean [ 
 	"set a cookie in the Response"
 	| temp |
-	temp _ String new writeStream.
+	temp := String new writeStream.
 	"NAME=VALUE"
 	temp nextPutAll: nameString;
 		 nextPut: $=;
@@ -849,7 +849,7 @@ HttpRequest >> setUsername: aUsername password: aPassword [
 	"save the username/password in cookies"
 	| pwHash |
 	self setUsername: aUsername.
-	pwHash _ self hashPassword: aPassword.
+	pwHash := self hashPassword: aPassword.
 	self
 		setCookieName: #ComanchePassword
 		value: pwHash asString
@@ -887,17 +887,17 @@ HttpRequest >> url [
 
 { #category : #accessing }
 HttpRequest >> url: aUrl [
-	url _ aUrl
+	url := aUrl
 ]
 
 { #category : #accessing }
 HttpRequest >> user [
 	"currently, only basic authentication is supported"
 	| userID i |
-	userID _ self header at: 'authorization' ifAbsent: [^nil].
-	(userID notNil and: [(i _ userID findString: 'Basic ') > 0])
-		ifTrue: [userID _ userID copyFrom: i+6 to: userID size]
-		ifFalse: [userID _ nil].
+	userID := self header at: 'authorization' ifAbsent: [^nil].
+	(userID notNil and: [(i := userID findString: 'Basic ') > 0])
+		ifTrue: [userID := userID copyFrom: i+6 to: userID size]
+		ifFalse: [userID := nil].
 	^userID
 ]
 

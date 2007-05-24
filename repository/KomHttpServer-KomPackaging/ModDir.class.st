@@ -70,22 +70,22 @@ ModDir class >> serverDirectory: aFileDirectory [
 { #category : #'as yet unclassified' }
 ModDir >> directoryIndex [
 
-	^directoryIndex ifNil: [directoryIndex _ OrderedCollection new]
+	^directoryIndex ifNil: [directoryIndex := OrderedCollection new]
 ]
 
 { #category : #'as yet unclassified' }
 ModDir >> directoryIndex: aCollectionOrString [
 
 	aCollectionOrString isString
-		ifTrue: [directoryIndex _ aCollectionOrString findTokens: ' ']
-		ifFalse: [directoryIndex _ aCollectionOrString]
+		ifTrue: [directoryIndex := aCollectionOrString findTokens: ' ']
+		ifFalse: [directoryIndex := aCollectionOrString]
 ]
 
 { #category : #'as yet unclassified' }
 ModDir >> directoryIndexExists: dir [
 
 	| fname |
-	fname _ self directoryIndex
+	fname := self directoryIndex
 		detect: [ :ea | dir fileExists: ea ]
 		ifNone: [^false].
 
@@ -108,10 +108,10 @@ ModDir >> isDir [
 ModDir >> processHttp [
 
 	| filePath dir request |
-	request _ HttpRequest current.
-	filePath _ ModDoc fullFilePath.
+	request := HttpRequest current.
+	filePath := ModDoc fullFilePath.
 
-	(self class directoryExists: (dir _ FileDirectory on: filePath))
+	(self class directoryExists: (dir := FileDirectory on: filePath))
 		ifFalse: [^false].
 
 	"If the url does not end in a slash, then redirect to add the slash"
@@ -133,7 +133,7 @@ ModDir >> processHttp [
 ModDir >> redirectWithTrailingSlash: request [
 
 	| location |
-	location _ request url, '/'.
+	location := request url, '/'.
 	HttpResponse current: 
 		((HttpResponse
 			status: #tempMoved

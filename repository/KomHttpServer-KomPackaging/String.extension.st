@@ -10,11 +10,11 @@ String >> asHttpResponseTo: request [
 String >> asIpByteArray [
 
 	| ip tmp |
-	ip _ self findTokens: '.'.
+	ip := self findTokens: '.'.
 	(ip size = 4) ifFalse: [ ^self error: 'Invalid IP Address' ].
 	ip detect: [ :ea | ea isPositiveInteger and: [ (ea asNumber <= 255) and: [ ea asNumber >= 0 ]]]
 		ifNone: [ ^self error: 'Invalid IP Address' ].
-	tmp _ ByteArray new: 4.
+	tmp := ByteArray new: 4.
 	1 to: 4 do: [ :in | tmp at: in put: (ip at: in) asNumber ].
 	^tmp
 

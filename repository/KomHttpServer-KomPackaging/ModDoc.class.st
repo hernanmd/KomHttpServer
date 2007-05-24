@@ -68,7 +68,7 @@ ModDoc class >> fullFilePath [
 ModDoc class >> initialize [
 	"self initialize"
 
-	DelimiterTranslation _ (0 to: 255) as: ByteArray.
+	DelimiterTranslation := (0 to: 255) as: ByteArray.
 	DelimiterTranslation 
 		at: ($/ asciiValue + 1) 
 		put: FileDirectory pathNameDelimiter asciiValue.
@@ -111,8 +111,8 @@ ModDoc >> documentRoot [
 ModDoc >> documentRoot: aDirectoryOrString [
 
 	aDirectoryOrString isString
-		ifTrue: [documentRoot _ FileDirectory on: aDirectoryOrString]
-		ifFalse: [documentRoot _ aDirectoryOrString]
+		ifTrue: [documentRoot := FileDirectory on: aDirectoryOrString]
+		ifFalse: [documentRoot := aDirectoryOrString]
 
 ]
 
@@ -146,8 +146,8 @@ ModDoc >> processHttp [
 	document root and relative file path"
 
 	| relativeFilePath path |
-	path _ ModCore path.
-	relativeFilePath _ self relativeFilePathFrom: path.
+	path := ModCore path.
+	relativeFilePath := self relativeFilePathFrom: path.
 	ModDoc documentRoot: self documentRoot.
 	ModDoc relativeFilePath: relativeFilePath.
 	self processSubModules ifTrue: [^true].

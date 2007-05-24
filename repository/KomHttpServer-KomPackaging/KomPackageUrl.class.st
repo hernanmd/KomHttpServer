@@ -207,31 +207,31 @@ KomPackageUrl >> printOn: strm [
 KomPackageUrl >> privateInitializeFromText: aString [
 
 	| remainder ind schemeName |
-	remainder _ aString.
+	remainder := aString.
 
-	schemeName _ Url schemeNameForString: remainder.
+	schemeName := Url schemeNameForString: remainder.
 	schemeName ifNotNil: [ 
-		remainder _ remainder copyFrom: (schemeName size+2) to: remainder size ].
+		remainder := remainder copyFrom: (schemeName size+2) to: remainder size ].
 
 	"remove leading // if it's there"
 	(remainder beginsWith: '//') ifTrue: [
-		remainder _ remainder copyFrom: 3 to: remainder size ].
+		remainder := remainder copyFrom: 3 to: remainder size ].
 
 	"get the name"
-	ind _ remainder indexOf: $/.
+	ind := remainder indexOf: $/.
 	ind > 0 ifTrue: [
-		ind = 1 ifTrue: [ name _ '' ] ifFalse: [
-			name _ remainder copyFrom: 1 to: ind-1.
-			remainder _ remainder copyFrom: ind+1 to: remainder size. ] ]
+		ind = 1 ifTrue: [ name := '' ] ifFalse: [
+			name := remainder copyFrom: 1 to: ind-1.
+			remainder := remainder copyFrom: ind+1 to: remainder size. ] ]
 	ifFalse: [
-		name _ remainder.
-		remainder _ ''. ].
+		name := remainder.
+		remainder := ''. ].
 
 	"Extract the version"
 	(name includes: $:)
 		ifTrue: [
-			version _ (name copyFrom: (name indexOf: $:) + 1 to: name size).
-			name _ name copyUpTo: $:].
+			version := (name copyFrom: (name indexOf: $:) + 1 to: name size).
+			name := name copyUpTo: $:].
 
 ]
 

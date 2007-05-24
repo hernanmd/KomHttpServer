@@ -54,25 +54,25 @@ MultipartChunk >> fileName: aString [
 MultipartChunk >> initializeFrom: aDictionary [
 	| str fileName fieldName idx contentType |
 	"PRE: all keys in aDictionary are low-case"
-	header _ aDictionary.
-	properties _ Dictionary new.
+	header := aDictionary.
+	properties := Dictionary new.
 self flag: #todo.
 	"parse the header, pick out: filename, etc."
 
-	str _ (header at: 'content-disposition' ifAbsent: ['']).
-	fileName _ fieldName _ ''.
+	str := (header at: 'content-disposition' ifAbsent: ['']).
+	fileName := fieldName := ''.
 
-	idx _ str findString: 'filename='.
+	idx := str findString: 'filename='.
 	idx > 0 ifTrue:
-		[fileName _ str copyFrom: idx + 10 to: (str indexOf: $" startingAt: idx+10) - 1].
+		[fileName := str copyFrom: idx + 10 to: (str indexOf: $" startingAt: idx+10) - 1].
 	properties at: #fileName put: fileName.
 
-	idx _ str findString: 'name='.
+	idx := str findString: 'name='.
 	idx > 0 ifTrue:
-		[fieldName _ str copyFrom: idx + 6 to: (str indexOf: $" startingAt: idx+6) - 1].
+		[fieldName := str copyFrom: idx + 6 to: (str indexOf: $" startingAt: idx+6) - 1].
 	properties at: #fieldName put: fieldName.
 
-	contentType _ header at: 'content-type' ifAbsent: [MIMEDocument defaultContentType].
+	contentType := header at: 'content-type' ifAbsent: [MIMEDocument defaultContentType].
 	properties at: #contentType put: contentType.
 
 "Transcript show: 'field=', fieldName; cr; show: 'file=', fileName; cr;
@@ -92,7 +92,7 @@ MultipartChunk >> multipartBoundary [
 
 { #category : #'initialize-release' }
 MultipartChunk >> multipartBoundary: aString [
-	multipartBoundary _ aString
+	multipartBoundary := aString
 ]
 
 { #category : #accessing }

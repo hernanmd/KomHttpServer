@@ -171,7 +171,7 @@ ComancheModule >> processVisitor: aKomModuleVisitor [
 { #category : #accessing }
 ComancheModule >> subModules [
 
-	^subModules ifNil: [subModules _ OrderedCollection new]
+	^subModules ifNil: [subModules := OrderedCollection new]
 ]
 
 { #category : #processing }

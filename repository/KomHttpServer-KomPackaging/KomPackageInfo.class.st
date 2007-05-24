@@ -261,7 +261,7 @@ KomPackageInfo >> optionalPackages [
 KomPackageInfo >> packageName [
 
 	(self class == (Smalltalk at: #KomPackageInfo)) ifTrue: [^'ABSTRACT'].
-	^packageName ifNil: [packageName _ (self categoryName copyUpTo: $-) ]
+	^packageName ifNil: [packageName := (self categoryName copyUpTo: $-) ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -373,7 +373,7 @@ KomPackageInfo >> runTestCases [
 	InstallOptions log: (self packageName, ': running SUnit tests (').
 	suite := (Smalltalk at: #TestSuite) new.
 	self sunitClasses do: [ :testClass | suite addTests: testClass suite tests].
-	testResults _ suite run.
+	testResults := suite run.
 	InstallOptions log: testResults printString.
 	(testResults errorCount > 0 or: [testResults failureCount > 0])
 		ifTrue: 

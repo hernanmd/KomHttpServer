@@ -80,7 +80,7 @@ ModCore >> isCore [
 ModCore >> optionsResponse [
 
 	| opts |
-	opts _ ModCore options ifNil: ['GET,HEAD,POST,OPTIONS,TRACE'].
+	opts := ModCore options ifNil: ['GET,HEAD,POST,OPTIONS,TRACE'].
 	^(HttpResponse fromString: '')
 		fieldAt: 'Allow' put: opts;
 		yourself
@@ -91,8 +91,8 @@ ModCore >> optionsResponse [
 ModCore >> processHttp [
 
 	| request method |
-	request _ HttpRequest current.
-	ModCore method: (method _ request method).
+	request := HttpRequest current.
+	ModCore method: (method := request method).
 	ModCore path: request url.
 	ModCore host: request networkHost.
 	ModCore serverRoot: self serverRoot.
@@ -121,8 +121,8 @@ ModCore >> serverRoot [
 ModCore >> serverRoot: aDirOrString [
 
 	aDirOrString isString
-		ifTrue: [serverRoot _ FileDirectory on: aDirOrString]
-		ifFalse: [serverRoot _ aDirOrString]
+		ifTrue: [serverRoot := FileDirectory on: aDirOrString]
+		ifFalse: [serverRoot := aDirOrString]
 
 
 ]

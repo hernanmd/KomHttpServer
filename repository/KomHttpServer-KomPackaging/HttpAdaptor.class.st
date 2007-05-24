@@ -118,10 +118,10 @@ HttpAdaptor class >> readAndWriteToSocket: aSocket service: httpService [
 HttpAdaptor class >> timeStamp [
 
 	| seconds |
-	seconds _ Time totalSeconds.
+	seconds := Time totalSeconds.
 	^seconds ~= LastTimeStampTime
 		ifTrue: 
-			[LastTimeStamp _ self buildTimeStamp: (LastTimeStampTime _ seconds)]
+			[LastTimeStamp := self buildTimeStamp: (LastTimeStampTime := seconds)]
 		ifFalse: 
 			[LastTimeStamp]
 ]
@@ -252,14 +252,14 @@ HttpAdaptor >> httpService [
 { #category : #accessing }
 HttpAdaptor >> httpService: aComancheHttpService [
 
-	httpService _ aComancheHttpService
+	httpService := aComancheHttpService
 ]
 
 { #category : #'initialize-release' }
 HttpAdaptor >> initializeOn: aStream httpService: anHttpService [
  
-	stream _ aStream.
-	httpService _ anHttpService.
+	stream := aStream.
+	httpService := anHttpService.
 ]
 
 { #category : #accessing }

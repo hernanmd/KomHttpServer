@@ -32,14 +32,14 @@ ModAlias >> pathPrefix [
 { #category : #'as yet unclassified' }
 ModAlias >> pathPrefix: aString [
 
-	pathPrefix _ aString
+	pathPrefix := aString
 ]
 
 { #category : #'as yet unclassified' }
 ModAlias >> processHttp [
 
 	| path |
-	path _ ModCore path.
+	path := ModCore path.
 	"check if our prefix matches"
 	((path beginsWith: pathPrefix) and: 
 	[path size = pathPrefix size or: [(path at: (pathPrefix size + 1)) = $/]])

@@ -31,9 +31,9 @@ Class {
 ModFile >> processHttp [
 
 	|  fullFilePath method |
-	method _ ModCore method.
+	method := ModCore method.
 	(method = 'GET' or: [method = 'POST']) ifFalse: [^false].
-	fullFilePath _ ModDoc fullFilePath.
+	fullFilePath := ModDoc fullFilePath.
 	(FileStream isAFileNamed: fullFilePath) ifFalse: [^false].
 
 	self processSubModules ifTrue: [^true].

@@ -82,12 +82,12 @@ ModVhost class >> string: aString [
 ModVhost >> getOffsetAt: pos [
 
 	| temp end val |
-	temp _ self template.
-	end _ pos.
-	(temp at: end) == $- ifTrue: [end _ end + 1].
-	[val _ temp at: end.
-	((val >= $0) and: [val <= $9] and: [temp size > end])] whileTrue: [end _ end + 1].
-	((val >= $0) and: [val <= $9]) ifTrue: [end _ end + 1].
+	temp := self template.
+	end := pos.
+	(temp at: end) == $- ifTrue: [end := end + 1].
+	[val := temp at: end.
+	((val >= $0) and: [val <= $9] and: [temp size > end])] whileTrue: [end := end + 1].
+	((val >= $0) and: [val <= $9]) ifTrue: [end := end + 1].
 	((end <= temp size) and: [(temp at: end) = $+])
 		ifTrue: [^temp copyFrom: pos to: end]
 		ifFalse: [^temp copyFrom: pos to: (end - 1)]
@@ -98,7 +98,7 @@ ModVhost >> getOffsetAt: pos [
 ModVhost >> getSubstituteAt: percentPosition host: aHost andDo: aBlock [
 
 	| temp nameIndex nextPos letterIndex sub |
-	temp _ self template.
+	temp := self template.
 
 	temp size <= percentPosition ifTrue: 
 		[aBlock value: '%'. 
@@ -112,17 +112,17 @@ ModVhost >> getSubstituteAt: percentPosition host: aHost andDo: aBlock [
 		[aBlock value: aHost port asString. 
 		^percentPosition + 2].
 
-	nameIndex _ self getOffsetAt: (percentPosition + 1).
-	nextPos _ percentPosition + 1 + nameIndex size.
+	nameIndex := self getOffsetAt: (percentPosition + 1).
+	nextPos := percentPosition + 1 + nameIndex size.
 
 	((temp size >= nextPos) and: [(temp at: nextPos) = $.])
 		ifTrue: 
-			[letterIndex _ self getOffsetAt: (nextPos + 1).
-			nextPos _ nextPos + letterIndex size + 1]
+			[letterIndex := self getOffsetAt: (nextPos + 1).
+			nextPos := nextPos + letterIndex size + 1]
 		ifFalse: 
-			[letterIndex _ '0'].
+			[letterIndex := '0'].
 
-	[sub _ aHost vhostName: nameIndex letter: letterIndex]
+	[sub := aHost vhostName: nameIndex letter: letterIndex]
 		on: Error do: [ :ex | aBlock value: '%'. ^percentPosition + 1].
 
 	aBlock value: sub.
@@ -148,36 +148,36 @@ ModVhost >> processHttp [
 ModVhost >> stringFromHost: aHost [
 
 	| pos temp done nextPercent |
-	pos _ 1.
-	temp _ self template.
-	done _ false.
+	pos := 1.
+	temp := self template.
+	done := false.
 
 	^String streamContents: [ :strm |
 		[done] whileFalse: 
-			[nextPercent _ temp indexOf: $% startingAt: pos.
+			[nextPercent := temp indexOf: $% startingAt: pos.
 			nextPercent = 0 
 				ifTrue:
 					[strm nextPutAll: (temp copyFrom: pos to: temp size).
-					done _ true.]
+					done := true.]
 				ifFalse: 
 					[strm nextPutAll: (temp copyFrom: pos to: (nextPercent - 1)).
-					pos _ self 
+					pos := self 
 						getSubstituteAt: nextPercent 
 						host: aHost
 						andDo: [ :sub | strm nextPutAll: sub ].
-					pos > temp size ifTrue: [done _ true]]]].
+					pos > temp size ifTrue: [done := true]]]].
 ]
 
 { #category : #'as yet unclassified' }
 ModVhost >> template [
 
-	^template ifNil: [template _ '%0']
+	^template ifNil: [template := '%0']
 ]
 
 { #category : #'as yet unclassified' }
 ModVhost >> template: aString [
 
-	template _ aString
+	template := aString
 ]
 
 { #category : #validation }

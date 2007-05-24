@@ -59,7 +59,7 @@ HttpResponse class >> fromMIMEDocument: aMIMEDoc [
 
 	content := aMIMEDoc content.
 	content isString ifTrue:
-		[content _ ReadStream on: content].
+		[content := ReadStream on: content].
 	^self basicNew
 		status: #ok;
 		"fieldAt: 'Cache-Control' put: 'max-age=86400';"
@@ -273,7 +273,7 @@ HttpResponse >> contentType [
 { #category : #accessing }
 HttpResponse >> contentType: aMimeType [
 
-	contentType _ aMimeType
+	contentType := aMimeType
 ]
 
 { #category : #accessing }
@@ -291,7 +291,7 @@ HttpResponse >> contents: aStream [
 
 { #category : #'accessing-cookies' }
 HttpResponse >> cookies [
-^ cookies ifNil:[cookies _ OrderedCollection new]
+^ cookies ifNil:[cookies := OrderedCollection new]
 ]
 
 { #category : #defaults }
@@ -334,7 +334,7 @@ HttpResponse >> fieldAt: aString put: aValue [
 { #category : #accessing }
 HttpResponse >> fields [
 
-	^fields ifNil: [fields _ Dictionary new]
+	^fields ifNil: [fields := Dictionary new]
 ]
 
 { #category : #authentication }
@@ -376,8 +376,8 @@ HttpResponse >> pvtWriteContentTypeOn: aStream [
 { #category : #responding }
 HttpResponse >> pvtWriteContentsOn: aStream [
 	| chunkSize cnts |
-	chunkSize _ self responseChunkSize.
-	cnts _ self contents.
+	chunkSize := self responseChunkSize.
+	cnts := self contents.
 
 	[cnts atEnd] whileFalse: 
 		[aStream nextPutAll: (cnts next: chunkSize); flush]
@@ -430,7 +430,7 @@ HttpResponse >> secretWord [
 HttpResponse >> setCookieName: nameString value: valueString expiresDate: expiresDate expiresTime: expiresTime path: pathString domain: domainString secure: secureBoolean [ 
 	"set a cookie in the Response"
 	| temp |
-	temp _ String new writeStream.
+	temp := String new writeStream.
 	"NAME=VALUE"
 	temp nextPutAll: nameString;
 		 nextPut: $=;
@@ -490,7 +490,7 @@ HttpResponse >> setUsername: aUsername password: aPassword [
 	"save the username/password in cookies"
 	| pwHash |
 	self setUsername: aUsername.
-	pwHash _ self hashPassword: aPassword.
+	pwHash := self hashPassword: aPassword.
 	self
 		setCookieName: #ComanchePassword
 		value: pwHash asString
@@ -509,7 +509,7 @@ HttpResponse >> status [
 { #category : #accessing }
 HttpResponse >> status: aSymbol [
 
-	status _ aSymbol
+	status := aSymbol
 ]
 
 { #category : #accessing }
@@ -523,7 +523,7 @@ HttpResponse >> statusCode [
 HttpResponse >> statusCodeAndReason [
 	| tmp |
 
-	tmp _ StatusCodes at: self status.
+	tmp := StatusCodes at: self status.
 	^tmp key, ' ', tmp value.
 ]
 
@@ -533,7 +533,7 @@ HttpResponse >> writeHeadersOn: aStream [
 	| tmp |
 	"Header"
 
-	tmp _ WriteStream on: ''.
+	tmp := WriteStream on: ''.
 	self pvtWriteStatusOn: tmp.
 	self pvtWriteFieldsOn: tmp.
 	self pvtWriteCookiesOn: tmp.

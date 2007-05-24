@@ -35,7 +35,7 @@ BufferedStream >> contents [
 BufferedStream >> includes: aChar [
 	"answer whether buffer includes aChar within bounds"
 	| tmp |
-	tmp _ buffer indexOf: aChar startingAt: startPos.
+	tmp := buffer indexOf: aChar startingAt: startPos.
 	^(tmp >= startPos) and: [tmp <= endPos]
 ]
 
@@ -43,7 +43,7 @@ BufferedStream >> includes: aChar [
 BufferedStream >> includesAll: aString [
 	"answer whether the buffer contains aString"
 	| tmp |
-	tmp _ buffer findString: aString startingAt: startPos.
+	tmp := buffer findString: aString startingAt: startPos.
 	^(tmp >= startPos) and: [tmp <= endPos]
 ]
 
@@ -66,28 +66,28 @@ BufferedStream >> match: aString [
 BufferedStream >> next [
 	"return the next character"
 	"consume it"
-	^buffer at: (startPos _ startPos + 1) - 1
+	^buffer at: (startPos := startPos + 1) - 1
 ]
 
 { #category : #accessing }
 BufferedStream >> next: anInteger [
 	"return next anInteger characters"
 	"consumes them"
-	^buffer copyFrom: startPos to: (startPos _ startPos + anInteger) - 1
+	^buffer copyFrom: startPos to: (startPos := startPos + anInteger) - 1
 ]
 
 { #category : #accessing }
 BufferedStream >> nextPutAll: aString [
-	buffer _ (buffer copyFrom: startPos to: endPos), aString.
-	startPos _ 1.
-	endPos _ buffer size
+	buffer := (buffer copyFrom: startPos to: endPos), aString.
+	startPos := 1.
+	endPos := buffer size
 ]
 
 { #category : #'initialize-release' }
 BufferedStream >> on: aString [
-	buffer _ aString.
-	startPos _ 1.
-	endPos _ buffer size
+	buffer := aString.
+	startPos := 1.
+	endPos := buffer size
 ]
 
 { #category : #accessing }
@@ -119,7 +119,7 @@ BufferedStream >> upTo: aChar [
 	"return String up to aChar, but not including"
 	"consumes the returned string"
 	| i |
-	i _ buffer indexOf: aChar startingAt: startPos.
+	i := buffer indexOf: aChar startingAt: startPos.
 	(i <= 0 or: [i > endPos])
 		ifTrue: [^self upToEnd].
 	^self next: (i-startPos)
@@ -130,7 +130,7 @@ BufferedStream >> upToAll: aString [
 	"return a string before the occurence of aString, if any"
 	"consume it"
 	| i |
-	i _ buffer findString: aString startingAt: startPos.
+	i := buffer findString: aString startingAt: startPos.
 	(i <= 0 or: [i > endPos])
 		ifTrue: [^self upToEnd].
 	^self next: (i-startPos)
@@ -141,7 +141,7 @@ BufferedStream >> upToEnd [
 	"return buffer contents,
 	consume all my buffer"
 	| string |
-	string _ self contents.
+	string := self contents.
 	self reset.
 	^string
 ]

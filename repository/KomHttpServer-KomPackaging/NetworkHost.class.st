@@ -37,7 +37,7 @@ NetworkHost >> domainString [
 
 	| sz |
 	^self isNamedHost ifTrue: [
-		((sz _ self name size) >= 2) ifTrue: [
+		((sz := self name size) >= 2) ifTrue: [
 			(self name at: (sz - 1)), '.', self name last.
 		] ifFalse: [
 			''
@@ -50,7 +50,7 @@ NetworkHost >> domainString [
 { #category : #accessing }
 NetworkHost >> fileSystemPath [
 	| delim |
-	delim _ FileDirectory pathNameDelimiter.
+	delim := FileDirectory pathNameDelimiter.
 
 	^String streamContents: 
 		[ :strm |
@@ -82,13 +82,13 @@ NetworkHost >> initializeFromIPAddress: str [
 
 	| nums |
 	((str occurrencesOf: $.) = 3) ifTrue: [
-		nums _ (str findTokens: '.') collect: [ :ea | 
+		nums := (str findTokens: '.') collect: [ :ea | 
 			ea isPositiveInteger ifTrue: [
 				ea asNumber
 			] ifFalse: [ ^self ]
 		].
-		name _ nums.
-		type _ #address.
+		name := nums.
+		type := #address.
 	].	
 	
 
@@ -99,8 +99,8 @@ NetworkHost >> initializeFromIPAddress: str [
 { #category : #initialization }
 NetworkHost >> initializeFromNamePath: namePath [
 
-	name _ namePath.
-	type _ #name.
+	name := namePath.
+	type := #name.
 
 	
 ]
@@ -117,12 +117,12 @@ NetworkHost >> initializeFromString: aString [
 NetworkHost >> initializeFromString: aString defaultPort: dPort [
 
 	| tmp |
-	fullName _ aString.
-	tmp _ self initializePortFromString: aString defaultPort: dPort.
+	fullName := aString.
+	tmp := self initializePortFromString: aString defaultPort: dPort.
 	self initializeFromIPAddress: tmp.
 	name ifNil: [
-		name _ tmp findTokens: '.'.
-		type _ #name.
+		name := tmp findTokens: '.'.
+		type := #name.
 	].
 
 	
@@ -132,16 +132,16 @@ NetworkHost >> initializeFromString: aString defaultPort: dPort [
 NetworkHost >> initializePortFromString: aString defaultPort: dPort [
 
 	| in tmp |
-	^(aString notNil and: [(in _ aString indexOf: $:) > 0]) ifTrue: [
-		tmp _ aString copyFrom: (in + 1) to: aString size.
+	^(aString notNil and: [(in := aString indexOf: $:) > 0]) ifTrue: [
+		tmp := aString copyFrom: (in + 1) to: aString size.
 		tmp isPositiveInteger ifTrue: [ 
-			port _ tmp asNumber 
+			port := tmp asNumber 
 		] ifFalse: [
-			port _ dPort.
+			port := dPort.
 		].
 		aString copyFrom: 1 to: (in - 1).
 	] ifFalse: [ 
-		port _ dPort. 
+		port := dPort. 
 		aString ifNotNil: [aString] ifNil: ['unknown']
 	].
 
@@ -180,10 +180,10 @@ NetworkHost >> name [
 NetworkHost >> nameString [
 
 	| tmp nm |
-	tmp _ (nm _ self name) first asString.
+	tmp := (nm := self name) first asString.
 
 	2 to: nm size do: [ :in |
-		tmp _ tmp, '.', (nm at: in) asString
+		tmp := tmp, '.', (nm at: in) asString
 	].
 	^tmp
 
@@ -206,50 +206,50 @@ NetworkHost >> vhostName: nameIndex letter: letterIndex [
 
 	"First get the name component"
 	| ni word nStart nEnd li |
-	ni _ nameIndex asNumber.
+	ni := nameIndex asNumber.
 	ni = 0 
-		ifTrue: [word _ self nameString]
+		ifTrue: [word := self nameString]
 		ifFalse:
 			[ni < 0 
 				ifTrue: 
-					[nStart _ name size + 1 + ni.
+					[nStart := name size + 1 + ni.
 					(nameIndex endsWith: '+') 
 						ifTrue: 
-							[nEnd _ nStart.
-							nStart _ 1]
-						ifFalse: [nEnd _ nStart]]
+							[nEnd := nStart.
+							nStart := 1]
+						ifFalse: [nEnd := nStart]]
 				ifFalse: 
-					[nStart _ ni.
+					[nStart := ni.
 					(nameIndex endsWith: '+') 
-						ifTrue: [nEnd _ name size]
-						ifFalse: [nEnd _ nStart]].
+						ifTrue: [nEnd := name size]
+						ifFalse: [nEnd := nStart]].
 			(nStart < 1 or: [nStart > name size])
-				ifTrue: [word _ '_']
+				ifTrue: [word := '_']
 				ifFalse:
-					[word _ String streamContents: 
+					[word := String streamContents: 
 						[ :strm |
 						(nStart to: nEnd)
 							do: [ :in | strm nextPutAll: (name at: in)]
 							separatedBy: [strm nextPut: $.]]]].
 
 	"Now get the letters"
-	li _ letterIndex asNumber.
+	li := letterIndex asNumber.
 	li = 0 
 		ifTrue: [^word]
 		ifFalse:
 			[li < 0 
 				ifTrue: 
-					[nStart _ word size + 1 + li.
+					[nStart := word size + 1 + li.
 					(letterIndex endsWith: '+') 
 						ifTrue: 
-							[nEnd _ nStart.
-							nStart _ 1]
-						ifFalse: [nEnd _ nStart]]
+							[nEnd := nStart.
+							nStart := 1]
+						ifFalse: [nEnd := nStart]]
 				ifFalse: 
-					[nStart _ li.
+					[nStart := li.
 					(letterIndex endsWith: '+') 
-						ifTrue: [nEnd _ word size]
-						ifFalse: [nEnd _ nStart]].
+						ifTrue: [nEnd := word size]
+						ifFalse: [nEnd := nStart]].
 			(nStart < 1 or: [nStart > name size])
 				ifTrue: [^'_']
 				ifFalse: [^word copyFrom: nStart to: nEnd]].
