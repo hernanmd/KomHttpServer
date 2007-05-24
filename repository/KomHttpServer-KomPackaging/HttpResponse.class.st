@@ -142,7 +142,7 @@ HttpResponse class >> initialize [
 HttpResponse class >> initializeStatusCodes [
 	"  HttpResponse initializeStatusCodes  "
 
-	StatusCodes _ IdentityDictionary new
+	StatusCodes := IdentityDictionary new
 		at: #processing			put: ('102' -> 'Processing'); 				"WebDav RFC: 2518"
 		at: #ok					put: ('200' -> 'OK');
 		at: #created				put: ('201' -> 'Created');
