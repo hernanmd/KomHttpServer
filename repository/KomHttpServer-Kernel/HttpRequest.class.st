@@ -68,10 +68,10 @@ HttpRequest class >> decodeUrlEncodedForm: string multipleValues: boolean [
 		ifFalse: [end _ end - 1].
 	eqSignPos _ string indexOf: $= startingAt: start.
 	(eqSignPos > end or: [eqSignPos == 0])
-		ifTrue: [key _ (key _ string copyFrom: start to: end) unescapePercents.
+		ifTrue: [key _ (key _ string copyFrom: start to: end) unescapePercentsWithTextEncoding: 'latin-1'.
 			value _ '']
-		ifFalse: [key _ (key _ string copyFrom: start to: eqSignPos-1) unescapePercents.
-			value _ (value _ string copyFrom: eqSignPos+1 to: end) unescapePercents].
+		ifFalse: [key _ (key _ string copyFrom: start to: eqSignPos-1) unescapePercentsWithTextEncoding: 'latin-1'.
+			value _ (value _ string copyFrom: eqSignPos+1 to: end) unescapePercentsWithTextEncoding: 'latin-1'].
 	self addKey: key value: value toForm: dict multipleValues: boolean.
 	start _ end + 2.
 	more] whileTrue.
@@ -123,11 +123,10 @@ HttpRequest class >> initialize [
 
 { #category : #parsing }
 HttpRequest class >> parseHttpHeader: string [
-	| dict key value start end more colonPos fieldDelims lastKey keyValueDelim crlf |
+	| dict key value start end more colonPos fieldDelims lastKey keyValueDelim |
 	dict _ Dictionary new.
-	crlf _ String crlf.
 	string isEmptyOrNil ifTrue: [^dict].
-	fieldDelims _ crlf asCharacterSet.
+	fieldDelims _ String crlf asCharacterSet.
 	keyValueDelim _ $:.
 	more _ true.
 	start _ end _ 1.
@@ -147,16 +146,16 @@ HttpRequest class >> parseHttpHeader: string [
 					[colonPos _ string indexOf: keyValueDelim startingAt: start.
 					(colonPos > end or: [colonPos == 0])
 						ifTrue:
-							[key _ (string copyFrom: start to: end) translateToLowercase.
+							[key _ (string copyFrom: start to: end) asLowercase.
 							value _ '']
 						ifFalse:
-							[key _ (string copyFrom: start to: colonPos-1) translateToLowercase.
+							[key _ (string copyFrom: start to: colonPos-1) asLowercase.
 							value _ (string copyFrom: colonPos+1 to: end) withBlanksTrimmed]].
 			key isEmpty
 				ifFalse: [dict at: key put: value.
 					lastKey _ key.
 					key _ ''].
-			start _ string skipDelimiters: crlf startingAt: end+1].
+			start _ string skipDelimiters: String crlf startingAt: end+1].
 	more] whileTrue.
 
 	^dict
@@ -336,7 +335,7 @@ HttpRequest >> initStatusString: aString [
 		ifTrue: 
 			[self method: statusLine first.
 			rawUrl := statusLine second.
-			url := (rawUrl copyUpTo: $?) unescapePercents.
+			url := (rawUrl copyUpTo: $?) unescapePercentsWithTextEncoding: 'latin-1'.
 			url size + 1 < rawUrl size 
 				ifTrue: [self queryString: (rawUrl copyFrom: url size + 2 to: rawUrl size)].
 			self protocol: statusLine third asUppercase]
@@ -501,6 +500,7 @@ HttpRequest >> multipartFormFieldsDo: aBlock [
 	| mChunk aFieldValue |
 	(self method = 'POST' and: [self contentType = MIMEDocument contentTypeMultipart])
 		ifFalse: [^nil].
+
 	stream peekForAll: self multipartBoundary.
 	[stream atEnd or: [stream peekForAll: '--']] whileFalse:
 		[stream next: 2.  "Advance over CRLF"
@@ -513,8 +513,7 @@ HttpRequest >> multipartFormFieldsDo: aBlock [
 				[aFieldValue := String streamContents: 
 					[:aStream |
 					mChunk saveToStream: aStream].
-				self postFields at: mChunk fieldName put: aFieldValue]]].
-	stream next: 2 "Advance over CRLF"
+				self postFields at: mChunk fieldName put: aFieldValue]]]
 ]
 
 { #category : #accessing }
@@ -537,30 +536,6 @@ HttpRequest >> nextChunkHeader [
 	mChunk stream: self stream.
 	mChunk multipartBoundary: self multipartBoundary.
 	^mChunk
-]
-
-{ #category : #private }
-HttpRequest >> parseCookies: aString [ 
-	"PRIVATE: Parse a string in the format:  
-	Cookie: NAME1=OPAQUE_STRING1; NAME2=OPAQUE_STRING2 ..."
-
-	| dict |
-	dict := Dictionary new.
-	(aString findTokens: ';') do: 
-			[:pairStr | 
-			| pair |
-			pair := pairStr findTokens: '='.
-			pair size = 2 
-				ifTrue: 
-					[| key value |
-					key := pair first withBlanksTrimmed asSymbol.
-					value := pair second withBlanksTrimmed.
-					dict at: key put: value]
-				ifFalse: 
-					["self log: 'Cookie invalid pair format: ''' , pairStr , ''''"
-
-					]].
-	^dict
 ]
 
 { #category : #'as yet unclassified' }
@@ -680,23 +655,9 @@ HttpRequest >> readRequestHeaderFrom: aStream [
 	| reqHeader |
 	reqHeader _ ReadStream on: 
 		(aStream upToAll: self endOfRequestHeaderMarker).
-	self initStatusString: (self readStatusStringFrom: reqHeader).
+	self initStatusString: (reqHeader upToAll: String crlf).
 	self header: (self class parseHttpHeader: reqHeader upToEnd).
 	self rawPostFields. "force reading/parsing post fields"
-]
-
-{ #category : #'initialize-release' }
-HttpRequest >> readStatusStringFrom: aStream [
-	"RFC 2068 says in section 4.1 (Message Types) that 'In the interest of
-	robustness, servers SHOULD ignore any empty line(s) received where
-	a Request-Line is expected', so we ignore any leading CR/LF's"
-	
-	| status |
-	status _ ''.
-	[status isEmpty and: [aStream atEnd not]]
-		whileTrue: [status _ aStream upToAll: String crlf].
-		
-	^ status
 ]
 
 { #category : #accessing }

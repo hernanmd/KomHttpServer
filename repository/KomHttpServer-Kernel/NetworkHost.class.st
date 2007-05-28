@@ -165,7 +165,7 @@ NetworkHost >> name [
 { #category : #accessing }
 NetworkHost >> nameString [
 	^ String streamContents: [ :str |
-			self name do: [:nm | str nextPutAll: nm printString] separatedBy: [str nextPut: $.] ]
+			self name do: [:nm | str nextPutAll: nm] separatedBy: [str nextPut: $.] ]
 
 ]
 

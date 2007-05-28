@@ -30,8 +30,8 @@ Class {
 		'mode'
 	],
 	#classVars : [
-		'ServerHostName',
-		'ServerType'
+		'ServerType',
+		'ServerHostName'
 	],
 	#category : #'KomHttpServer-Kernel'
 }

@@ -21,8 +21,8 @@ Class {
 		'cookies'
 	],
 	#classVars : [
-		'StatusCodes',
-		'StatusSymbols'
+		'StatusSymbols',
+		'StatusCodes'
 	],
 	#category : #'KomHttpServer-Protocol'
 }
