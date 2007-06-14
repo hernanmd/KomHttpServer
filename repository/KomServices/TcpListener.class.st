@@ -11,11 +11,11 @@ Instance variables:
 
 Usage:
 
-In the following example, a ComancheListener is established on port 8123.  After evaluating the following example, if you open a transcript window and point a web browser to port 8123 of this machine (ie. http://localhost:8123/), you should see several http requests appear in the transcript.
+In the following example, a TcpListener is established on port 8123.  After evaluating the following example, if you open a transcript window and point a web browser to port 8123 of this machine (ie. http://localhost:8123/), you should see several http requests appear in the transcript.
 
 	| count listener |
 	count _ 0.
-	listener _ ComancheListener 
+	listener _ TcpListener
 		on: 8123
 		handler: 
 			[ :socket |
@@ -24,7 +24,7 @@ In the following example, a ComancheListener is established on port 8123.  After
 			socket closeAndDestroy].
 	listener forkAndListenWhile: [count < 5].
 
-For an additional example of using ComancheListener, see ComancheNetService.
+For an additional example of using TcpListener, see HttpService.
 
 "
 Class {
@@ -111,9 +111,9 @@ TcpListener >> forkAndListenWhile: aBlock [
 { #category : #'initialize-release' }
 TcpListener >> initializeOnPort: aNumber handler: aValuableObject [
 
-	portNumber := aNumber.
-	handler := aValuableObject.
-	socketsToDestroy := OrderedCollection new
+	portNumber _ aNumber.
+	handler _ aValuableObject.
+	socketsToDestroy _ OrderedCollection new
 ]
 
 { #category : #private }
@@ -207,11 +207,11 @@ TcpListener >> pvtNewListener: backlogSize [
 TcpListener >> pvtOldListenLoop: aBlock [
 	"see comment on ConnectionQueue>>oldStyleListenLoop"
 	| socket |
-	socket := nil.
+	socket _ nil.
 	aBlock whileTrue:
 		[socket ifNil:
 			["try to create a new socket for listening"
-			socket := Socket createIfFail: [nil]].
+			socket _ Socket createIfFail: [nil]].
 		socket 
 			ifNil: [Process terminationOkDuring: [(Delay forMilliseconds: 100) wait]]
 			ifNotNil:
@@ -225,10 +225,10 @@ TcpListener >> pvtOldListenLoop: aBlock [
 					ifTrue: 
 						["connection established"
 						handler value: socket.
-						socket := nil]
+						socket _ nil]
 					ifFalse:
 						[socket isWaitingForConnection
-							ifFalse: [socket destroy. socket := nil]]]]
+							ifFalse: [socket destroy. socket _ nil]]]]
 ]
 
 { #category : #accessing }

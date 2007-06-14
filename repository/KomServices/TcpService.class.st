@@ -12,7 +12,7 @@ Subclasses should override the #serve: method to process incoming TCP connection
 "
 Class {
 	#name : #TcpService,
-	#superclass : #Service,
+	#superclass : #ApplicationService,
 	#instVars : [
 		'portNumber'
 	],
@@ -67,6 +67,26 @@ TcpService class >> on: portNumber priority: priorityNum [
 		priority: priorityNum;
 		yourself
 
+]
+
+{ #category : #accessing }
+TcpService class >> serviceOnPort: portNumber [
+	^ self serviceOnPort: portNumber
+		ifAbsent: [self error: 'No service on that port']
+]
+
+{ #category : #accessing }
+TcpService class >> serviceOnPort: portNumber ifAbsent: aBlock [
+	^ self services
+		detect: [:service | service portNumber = portNumber]
+		ifNone: aBlock
+]
+
+{ #category : #accessing }
+TcpService class >> services [
+	"Return all registered TcpServices."
+
+	^ super services select: [:service | service isKindOf: TcpService]
 ]
 
 { #category : #'instance creation' }
@@ -187,7 +207,7 @@ TcpService >> unassignPort [
 
 { #category : #conversation }
 TcpService >> value: aSocket [
-	"This method is invoked by the ComancheListener"
+	"This method is invoked by the TcpListener"
 
 	[self serve: aSocket] newProcessWithClampedBindings
 		name: (self name, ' connection');
