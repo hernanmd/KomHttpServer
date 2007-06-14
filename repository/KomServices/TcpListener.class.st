@@ -83,6 +83,10 @@ TcpListener class >> on: portNumber handler: aValuable [
 
 ]
 
+{ #category : #private }
+TcpListener >> NotPresent: anApplication [
+]
+
 { #category : #accessing }
 TcpListener >> acceptTimeout [
 	^self class acceptTimeout
@@ -199,7 +203,7 @@ TcpListener >> pvtNewListener: backlogSize [
 	| listener |
 	listener := self socketClass newTCP.
 	self socketsToDestroy add: listener.
-	listener listenOn: portNumber backlogSize: backlogSize.
+	listener listenOn: portNumber backlogSize: backlogSize interface: #(127 0 0 1) asByteArray.
 	^listener
 ]
 
