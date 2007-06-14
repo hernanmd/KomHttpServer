@@ -58,22 +58,22 @@ HttpRequest class >> decodeUrlEncodedForm: string [
 { #category : #parsing }
 HttpRequest class >> decodeUrlEncodedForm: string multipleValues: boolean [
 	| dict key value start end eqSignPos more |
-	dict := boolean ifTrue: [HttpFormDictionary new] ifFalse: [Dictionary new].
+	dict _ boolean ifTrue: [HttpFormDictionary new] ifFalse: [Dictionary new].
 	string isEmptyOrNil ifTrue: [^dict].
-	more := true.
-	start := 1.
-	[end := string indexOf: $& startingAt: start.
+	more _ true.
+	start _ 1.
+	[end _ string indexOf: $& startingAt: start.
 	end == 0
-		ifTrue: [end := string size. more := false]
-		ifFalse: [end := end - 1].
-	eqSignPos := string indexOf: $= startingAt: start.
+		ifTrue: [end _ string size. more _ false]
+		ifFalse: [end _ end - 1].
+	eqSignPos _ string indexOf: $= startingAt: start.
 	(eqSignPos > end or: [eqSignPos == 0])
-		ifTrue: [key := (key := string copyFrom: start to: end) unescapePercents.
-			value := '']
-		ifFalse: [key := (key := string copyFrom: start to: eqSignPos-1) unescapePercents.
-			value := (value := string copyFrom: eqSignPos+1 to: end) unescapePercents].
+		ifTrue: [key _ (key _ string copyFrom: start to: end) unescapePercentsWithTextEncoding: nil.
+			value _ '']
+		ifFalse: [key _ (key _ string copyFrom: start to: eqSignPos-1) unescapePercentsWithTextEncoding: nil.
+			value _ (value _ string copyFrom: eqSignPos+1 to: end) unescapePercentsWithTextEncoding: nil].
 	self addKey: key value: value toForm: dict multipleValues: boolean.
-	start := end + 2.
+	start _ end + 2.
 	more] whileTrue.
 
 	^dict
@@ -342,7 +342,7 @@ HttpRequest >> initStatusString: aString [
 		ifTrue: 
 			[self method: statusLine first.
 			rawUrl := statusLine second.
-			url := (rawUrl copyUpTo: $?) unescapePercents.
+			url := (rawUrl copyUpTo: $?) unescapePercentsWithTextEncoding: nil.
 			url size + 1 < rawUrl size 
 				ifTrue: [self queryString: (rawUrl copyFrom: url size + 2 to: rawUrl size)].
 			self protocol: statusLine third asUppercase]
@@ -548,7 +548,7 @@ HttpRequest >> nextChunkHeader [
 { #category : #private }
 HttpRequest >> parseCookies: aString [ 
 	"PRIVATE: Parse a string in the format:  
-	Cookie: NAME1=OPAQUE:=STRING1; NAME2=OPAQUE:=STRING2 ..."
+	Cookie: NAME1=OPAQUE_STRING1; NAME2=OPAQUE_STRING2 ..."
 
 	| dict |
 	dict := Dictionary new.
@@ -556,11 +556,15 @@ HttpRequest >> parseCookies: aString [
 			[:pairStr | 
 			| pair |
 			pair := pairStr findTokens: '='.
-			pair size = 2 
+			pair size > 0 
 				ifTrue: 
 					[| key value |
 					key := pair first withBlanksTrimmed asSymbol.
-					value := pair second withBlanksTrimmed.
+					value := pair size > 1 
+						ifTrue:
+							[pair second withBlanksTrimmed]
+						ifFalse:
+							[nil].
 					dict at: key put: value]
 				ifFalse: 
 					["self log: 'Cookie invalid pair format: ''' , pairStr , ''''"
