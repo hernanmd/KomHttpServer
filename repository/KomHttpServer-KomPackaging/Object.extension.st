@@ -1,6 +1,6 @@
 Extension { #name : #Object }
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 Object >> asHtmlDocumentForRequest: aNetworkRequest [
 
 	self error: 
@@ -9,7 +9,7 @@ Object >> asHtmlDocumentForRequest: aNetworkRequest [
 		'), could not be converted into HTML for your browser.')
 ]
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 Object >> asHttpResponseTo: anHttpRequest [
 
 	^(self asHtmlDocumentForRequest: anHttpRequest) 
@@ -17,8 +17,14 @@ Object >> asHttpResponseTo: anHttpRequest [
 
 ]
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 Object >> isComancheModule [
 
 	^false
+]
+
+{ #category : #'*KomHttpServer' }
+Object >> mimeType [
+
+	^MIMEDocument defaultContentType
 ]

@@ -138,10 +138,8 @@ ModVhost >> isVhost [
 
 { #category : #'as yet unclassified' }
 ModVhost >> processHttp [
-
-	ModVhost string: (self stringFromHost: ModCore host).
+	self class string: (self stringFromHost: ModCore host).
 	^self processSubModules
-
 ]
 
 { #category : #'as yet unclassified' }

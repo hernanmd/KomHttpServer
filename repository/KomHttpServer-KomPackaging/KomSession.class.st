@@ -67,7 +67,7 @@ KomSession >> id [
 
 { #category : #initialization }
 KomSession >> initialize [
-
+	super initialize.
 	attributes := Dictionary new.
 	id := self class nextSessionID
 ]

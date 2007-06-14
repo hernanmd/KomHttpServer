@@ -1,6 +1,6 @@
 Extension { #name : #TextMorph }
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 TextMorph >> asHttpResponseTo: request [
 	^self asText asHttpResponseTo: request
 ]

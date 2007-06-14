@@ -104,16 +104,15 @@ ModAuth >> extractUser: auth [
 
 { #category : #processing }
 ModAuth >> processHttp [
-
 	| request |
 	request := HttpRequest current.
-	self extractAuthInfo: request andDo: 
-		[ :user :password | 
-		(self verifyPassword: password forUser: user)
-			ifTrue: 
-				[ModAuth user: user.
-				^self processSubModules]].
-	
+	self extractAuthInfo: request
+		andDo: 
+			[:user :password | 
+			(self verifyPassword: password forUser: user) 
+				ifTrue: 
+					[self class user: user.
+					^self processSubModules]].
 	HttpResponse current: self authorizationResponse.
 	^true
 ]

@@ -40,7 +40,7 @@ ModDir class >> directoryExists: aFileDirectory [
 	FileDirectory>>exists"
 
 	"Ordinarily, just do:"
-	Smalltalk platformName ~= 'Mac OS' ifTrue: [^aFileDirectory exists].
+	SmalltalkImage current platformName ~= 'Mac OS' ifTrue: [^aFileDirectory exists].
 
 	"But! Because of Mac idiosyncracies, do:"
 	^aFileDirectory exists and: 
@@ -74,28 +74,25 @@ ModDir >> directoryIndex [
 ]
 
 { #category : #'as yet unclassified' }
-ModDir >> directoryIndex: aCollectionOrString [
-
-	aCollectionOrString isString
-		ifTrue: [directoryIndex := aCollectionOrString findTokens: ' ']
-		ifFalse: [directoryIndex := aCollectionOrString]
+ModDir >> directoryIndex: aCollectionOrString [ 
+	directoryIndex := aCollectionOrString isString 
+		ifTrue: [aCollectionOrString findTokens: ' ']
+		ifFalse: [aCollectionOrString]
 ]
 
 { #category : #'as yet unclassified' }
-ModDir >> directoryIndexExists: dir [
-
+ModDir >> directoryIndexExists: dir [ 
 	| fname |
-	fname := self directoryIndex
-		detect: [ :ea | dir fileExists: ea ]
-		ifNone: [^false].
+	
+	fname := self directoryIndex detect: [:ea | dir fileExists: ea]
+				ifNone: [^false].
 
 	"Our directory exists, set the full file name so that
 	ModFile will detect and serve the index file (note, if no ModFile
 	gets processed after this module, then a doc not found will be returned)"
-
-	ModDoc relativeFilePath: (ModDoc relativeFilePath, fname).
-	^true.
-
+	
+	ModDoc relativeFilePath: ModDoc relativeFilePath , fname.
+	^true
 ]
 
 { #category : #testing }
@@ -106,12 +103,10 @@ ModDir >> isDir [
 
 { #category : #'as yet unclassified' }
 ModDir >> processHttp [
-
 	| filePath dir request |
 	request := HttpRequest current.
-	filePath := ModDoc fullFilePath.
-
-	(self class directoryExists: (dir := FileDirectory on: filePath))
+	filePath := self class fullFilePath.
+	(self class directoryExists: (dir := FileDirectory on: filePath)) 
 		ifFalse: [^false].
 
 	"If the url does not end in a slash, then redirect to add the slash"
@@ -119,14 +114,9 @@ ModDir >> processHttp [
 		ifTrue: 
 			[self redirectWithTrailingSlash: request.
 			^true].
-
 	(self directoryIndexExists: dir) ifTrue: [^false].
-
-	ModDir serverDirectory: dir.
-	self processSubModules ifTrue: [^true].
-	^false
-
-
+	self class serverDirectory: dir.
+	^ self processSubModules 
 ]
 
 { #category : #'as yet unclassified' }

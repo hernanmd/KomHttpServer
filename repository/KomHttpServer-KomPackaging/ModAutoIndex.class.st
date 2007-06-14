@@ -136,14 +136,12 @@ ModAutoIndex >> parentEntry: request on: strm [
 
 { #category : #processing }
 ModAutoIndex >> processHttp [
-
 	| dir request |
 	request := HttpRequest current.
-	(request method = 'GET' or: [request method = 'POST']) ifFalse: [^false].
-
+	(#(#GET #POST) includes: request method) ifFalse: [^false].
 	dir := ModDir serverDirectory.
-	HttpResponse current: 
-		(HttpResponse fromString: (self directoryListing: request directory: dir)).
+	HttpResponse current: (HttpResponse 
+				fromString: (self directoryListing: request directory: dir)).
 	^true
 ]
 

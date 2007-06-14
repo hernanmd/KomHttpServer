@@ -67,13 +67,10 @@ ModuleAssembly >> alias: pathPrefix to: aBlock [
 ]
 
 { #category : #construction }
-ModuleAssembly >> authenticate: anAuthDb realm: realmString [
-
-	self addModule: 
-		(ModAuth new 
-			authDb: anAuthDb; 
-			realm: realmString 
-			yourself)
+ModuleAssembly >> authenticate: anAuthDb realm: realmString [ 
+	self addModule: ((ModAuth new)
+				authDb: anAuthDb;
+				realm: realmString; yourself)
 ]
 
 { #category : #construction }
@@ -116,9 +113,9 @@ ModuleAssembly >> documentRoot: docRoot do: aBlock [
 
 { #category : #construction }
 ModuleAssembly >> initialize [
-
-	moduleStack := OrderedCollection new.
-
+	super initialize.
+	
+	moduleStack := OrderedCollection new
 ]
 
 { #category : #'error handling' }

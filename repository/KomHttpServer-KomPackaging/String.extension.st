@@ -1,12 +1,12 @@
 Extension { #name : #String }
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 String >> asHttpResponseTo: request [
 
 	^HttpResponse fromString: self
 ]
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 String >> asIpByteArray [
 
 	| ip tmp |
@@ -20,7 +20,7 @@ String >> asIpByteArray [
 
 ]
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 String >> isPositiveInteger [
 
 	self isEmpty ifTrue: [^false].

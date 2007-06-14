@@ -94,10 +94,10 @@ ModSession >> extractSession: aRequest [
 
 { #category : #initialization }
 ModSession >> initialize [
-
+	super initialize.
+	
 	sessions := Dictionary new.
 	mutex := Semaphore forMutualExclusion.
-
 	lastCleanup := Time totalSeconds.
 	"30 minutes"
 	secondsToLive := 30 * 60

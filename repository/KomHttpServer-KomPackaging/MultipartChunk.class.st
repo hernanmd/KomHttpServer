@@ -15,7 +15,6 @@ Class {
 	#name : #MultipartChunk,
 	#superclass : #Object,
 	#instVars : [
-		'header',
 		'properties',
 		'multipartBoundary',
 		'stream'
@@ -52,7 +51,7 @@ MultipartChunk >> fileName: aString [
 
 { #category : #'initialize-release' }
 MultipartChunk >> initializeFrom: aDictionary [
-	| str fileName fieldName idx contentType |
+	| header str fileName fieldName idx contentType |
 	"PRE: all keys in aDictionary are low-case"
 	header := aDictionary.
 	properties := Dictionary new.
@@ -82,7 +81,7 @@ self flag: #todo.
 
 { #category : #testing }
 MultipartChunk >> isSaved [
-	^(properties at: #isSaved ifAbsent: [false]) == true
+	^(properties at: #isSaved ifAbsent: [false])
 ]
 
 { #category : #accessing }
@@ -96,7 +95,7 @@ MultipartChunk >> multipartBoundary: aString [
 ]
 
 { #category : #accessing }
-MultipartChunk >> saveToStream: outStream [
+MultipartChunk >> saveToStream: outStream [ 
 	"This method is really dumb, it reads the entire body of the 
 	chunk before writing it onto outStream.  In the future, this will
 	change to a better streaming mechanism to allow very large amounts
@@ -105,18 +104,17 @@ MultipartChunk >> saveToStream: outStream [
 	| body origFileName boundary |
 	self setSavedFlag.
 	origFileName := self fileName.
-	boundary := String crlf, self multipartBoundary.
+	boundary := String crlf , self multipartBoundary.
 	body := self stream upToAll: boundary.
 
 	"IE4 for Mac appends 128 bytes of Mac file system info - must remove"
-	body size >= 128 ifTrue:
-		[((body at: 1) asciiValue = 0 and: 
-		[(body at: 2) asciiValue = origFileName size and: 
-		[(body copyFrom: 3 to: origFileName size + 2) = origFileName]])
-			ifTrue: [body := body copyFrom: 129 to: body size]].
-
-	outStream nextPutAll: body.
-
+	body size >= 128 
+		ifTrue: 
+			[(body first asciiValue = 0 and: 
+					[body second asciiValue = origFileName size 
+						and: [(body copyFrom: 3 to: origFileName size + 2) = origFileName]]) 
+				ifTrue: [body := body copyFrom: 129 to: body size]].
+	outStream nextPutAll: body
 ]
 
 { #category : #accessing }

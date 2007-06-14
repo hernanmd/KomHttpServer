@@ -1,6 +1,6 @@
 Extension { #name : #TextEmphasis }
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 TextEmphasis >> printHtmlCloseTagOn: strm [
 	emphasisCode = 1 ifTrue: [strm nextPutAll: '</B>'].
 	emphasisCode = 2 ifTrue: [strm nextPutAll: '</I>'].
@@ -8,7 +8,7 @@ TextEmphasis >> printHtmlCloseTagOn: strm [
 	emphasisCode = 16 ifTrue: [strm nextPutAll: '</S>']
 ]
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 TextEmphasis >> printHtmlOpenTagOn: strm [
 	emphasisCode = 1 ifTrue: [strm nextPutAll: '<B>'].
 	emphasisCode = 2 ifTrue: [strm nextPutAll: '<I>'].

@@ -24,8 +24,7 @@ Class {
 		'properties'
 	],
 	#classVars : [
-		'EndOfRequestHeaderMarker',
-		'HttpStatusCodeDict'
+		'EndOfRequestHeaderMarker'
 	],
 	#category : #'KomHttpServer-Protocol'
 }
@@ -130,10 +129,11 @@ HttpRequest class >> new [
 
 { #category : #parsing }
 HttpRequest class >> parseHttpHeader: string [
-	| dict key value start end more colonPos fieldDelims lastKey keyValueDelim |
+	| dict key value start end more colonPos fieldDelims lastKey keyValueDelim crlf |
 	dict := Dictionary new.
+	crlf := String crlf.
 	string isEmptyOrNil ifTrue: [^dict].
-	fieldDelims := String crlf asCharacterSet.
+	fieldDelims := crlf asCharacterSet.
 	keyValueDelim := $:.
 	more := true.
 	start := end := 1.
@@ -153,16 +153,16 @@ HttpRequest class >> parseHttpHeader: string [
 					[colonPos := string indexOf: keyValueDelim startingAt: start.
 					(colonPos > end or: [colonPos == 0])
 						ifTrue:
-							[key := (string copyFrom: start to: end) asLowercase.
+							[key := (string copyFrom: start to: end) translateToLowercase.
 							value := '']
 						ifFalse:
-							[key := (string copyFrom: start to: colonPos-1) asLowercase.
+							[key := (string copyFrom: start to: colonPos-1) translateToLowercase.
 							value := (string copyFrom: colonPos+1 to: end) withBlanksTrimmed]].
 			key isEmpty
 				ifFalse: [dict at: key put: value.
 					lastKey := key.
 					key := ''].
-			start := string skipDelimiters: String crlf startingAt: end+1].
+			start := string skipDelimiters: crlf startingAt: end+1].
 	more] whileTrue.
 
 	^dict
@@ -297,8 +297,9 @@ HttpRequest >> getUsername [
 ]
 
 { #category : #'user authentication' }
-HttpRequest >> hashPassword: aPassword [
-	^HttpRequest hashPassword: aPassword
+HttpRequest >> hashPassword: aPassword [ 
+
+	^ self class hashPassword: aPassword
 ]
 
 { #category : #accessing }
@@ -330,31 +331,28 @@ HttpRequest >> host [
 
 { #category : #'initialize-release' }
 HttpRequest >> initRemoteAddress [
-
-	(stream respondsTo: #socket) ifTrue: 
-		[self remoteAddress: stream socket remoteAddress]
+	self remoteAddress: stream socket remoteAddress
 ]
 
 { #category : #'initialize-release' }
-HttpRequest >> initStatusString: aString [
+HttpRequest >> initStatusString: aString [ 
 	| statusLine |
 	statusLine := aString findTokens: ' '.
-	(statusLine size = 3 or: [statusLine size = 2])
+	(statusLine size between: 2 and: 3) 
 		ifTrue: 
 			[self method: statusLine first.
 			rawUrl := statusLine second.
 			url := (rawUrl copyUpTo: $?) unescapePercents.
-			url size + 1 < rawUrl size ifTrue: 
-				[self queryString: (rawUrl copyFrom: (url size + 2) to: rawUrl size)].
+			url size + 1 < rawUrl size 
+				ifTrue: [self queryString: (rawUrl copyFrom: url size + 2 to: rawUrl size)].
 			self protocol: statusLine third asUppercase]
-		ifFalse: 
-			[^self error: 'invalid http status line']
+		ifFalse: [^self error: 'invalid http status line']
 ]
 
 { #category : #'initialize-release' }
 HttpRequest >> initialize [
-
-	properties := IdentityDictionary new.
+	super initialize.
+	properties := IdentityDictionary new
 ]
 
 { #category : #'initialize-release' }
@@ -429,25 +427,21 @@ HttpRequest >> isUsername: aUsername password: aPassword [
 { #category : #accessing }
 HttpRequest >> localAddress [
 	"Answer the address of the request originator"
-	^self propertyAt: #localAddress ifAbsentPut: [
-		(stream respondsTo: #socket) ifTrue: [
-			stream socket localAddress
-		] ifFalse: [
-			nil
-		]
-	]
+
+	^self propertyAt: #localAddress
+		ifAbsentPut: 
+			[stream socket localAddress]
+
 ]
 
 { #category : #accessing }
 HttpRequest >> localPort [
 	"Answer the address of the request originator"
-	^self propertyAt: #localPort ifAbsentPut: [
-		(stream respondsTo: #socket) ifTrue: [
-			stream socket localPort
-		] ifFalse: [
-			nil
-		]
-	]
+
+	^self propertyAt: #localPort
+		ifAbsentPut: 
+			[stream socket localPort]
+
 ]
 
 { #category : #accessing }
@@ -513,7 +507,6 @@ HttpRequest >> multipartFormFieldsDo: aBlock [
 	| mChunk aFieldValue |
 	(self method = 'POST' and: [self contentType = MIMEDocument contentTypeMultipart])
 		ifFalse: [^nil].
-
 	stream peekForAll: self multipartBoundary.
 	[stream atEnd or: [stream peekForAll: '--']] whileFalse:
 		[stream next: 2.  "Advance over CRLF"
@@ -526,7 +519,8 @@ HttpRequest >> multipartFormFieldsDo: aBlock [
 				[aFieldValue := String streamContents: 
 					[:aStream |
 					mChunk saveToStream: aStream].
-				self postFields at: mChunk fieldName put: aFieldValue]]]
+				self postFields at: mChunk fieldName put: aFieldValue]]].
+	stream next: 2 "Advance over CRLF"
 ]
 
 { #category : #accessing }
@@ -555,19 +549,24 @@ HttpRequest >> nextChunkHeader [
 HttpRequest >> parseCookies: aString [ 
 	"PRIVATE: Parse a string in the format:  
 	Cookie: NAME1=OPAQUE:=STRING1; NAME2=OPAQUE:=STRING2 ..."
+
 	| dict |
 	dict := Dictionary new.
-	(aString findTokens: ';')
-		collect: [:pairStr | 
-			| pair | 
+	(aString findTokens: ';') do: 
+			[:pairStr | 
+			| pair |
 			pair := pairStr findTokens: '='.
-			pair size = 2
-				ifTrue: [| key value | 
+			pair size = 2 
+				ifTrue: 
+					[| key value |
 					key := pair first withBlanksTrimmed asSymbol.
 					value := pair second withBlanksTrimmed.
 					dict at: key put: value]
-				ifFalse: ["self log: 'Cookie invalid pair format: ''' , pairStr , ''''"]].
-	^ dict
+				ifFalse: 
+					["self log: 'Cookie invalid pair format: ''' , pairStr , ''''"
+
+					]].
+	^dict
 ]
 
 { #category : #'as yet unclassified' }
@@ -729,9 +728,23 @@ HttpRequest >> readRequestHeaderFrom: aStream [
 	| reqHeader |
 	reqHeader := ReadStream on: 
 		(aStream upToAll: self endOfRequestHeaderMarker).
-	self initStatusString: (reqHeader upToAll: String crlf).
+	self initStatusString: (self readStatusStringFrom: reqHeader).
 	self header: (self class parseHttpHeader: reqHeader upToEnd).
 	self rawPostFields. "force reading/parsing post fields"
+]
+
+{ #category : #'initialize-release' }
+HttpRequest >> readStatusStringFrom: aStream [
+	"RFC 2068 says in section 4.1 (Message Types) that 'In the interest of
+	robustness, servers SHOULD ignore any empty line(s) received where
+	a Request-Line is expected', so we ignore any leading CR/LF's"
+	
+	| status |
+	status := ''.
+	[status isEmpty and: [aStream atEnd not]]
+		whileTrue: [status := aStream upToAll: String crlf].
+		
+	^ status
 ]
 
 { #category : #accessing }
@@ -771,7 +784,7 @@ HttpRequest >> responseCookies [
 
 { #category : #'user authentication' }
 HttpRequest >> secretWord [
-	^HttpRequest secretWord
+	^ self class secretWord
 ]
 
 { #category : #'user authentication' }
@@ -893,11 +906,12 @@ HttpRequest >> url: aUrl [
 { #category : #accessing }
 HttpRequest >> user [
 	"currently, only basic authentication is supported"
+
 	| userID i |
 	userID := self header at: 'authorization' ifAbsent: [^nil].
-	(userID notNil and: [(i := userID findString: 'Basic ') > 0])
-		ifTrue: [userID := userID copyFrom: i+6 to: userID size]
-		ifFalse: [userID := nil].
+	userID := (userID notNil and: [(i := userID findString: 'Basic ') > 0]) 
+		ifTrue: [userID copyFrom: i + 6 to: userID size]
+		ifFalse: [nil].
 	^userID
 ]
 

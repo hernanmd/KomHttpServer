@@ -1,12 +1,12 @@
 Extension { #name : #TextFontChange }
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 TextFontChange >> printHtmlCloseTagOn: strm [
 	strm
 		nextPutAll: '</FONT>'
 ]
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 TextFontChange >> printHtmlOpenTagOn: strm [
 	strm
 		nextPutAll: '<FONT SIZE="';

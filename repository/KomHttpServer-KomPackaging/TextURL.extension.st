@@ -1,12 +1,12 @@
 Extension { #name : #TextURL }
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 TextURL >> printHtmlCloseTagOn: strm [
 	strm
 		nextPutAll: '</A>'
 ]
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 TextURL >> printHtmlOpenTagOn: strm [
 	strm
 		nextPutAll: '<A HREF="';

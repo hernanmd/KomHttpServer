@@ -48,11 +48,9 @@ KomLogger >> attachTheTranscript [
 
 { #category : #'as yet unclassified' }
 KomLogger >> attachTranscript [
-
 	self detachTheTranscript.
-	^(self streams 
-		detect: [ :ea | ea isKindOf: TranscriptStream]
-		ifNone: [nil]) ifNil: [self addStream: TranscriptStream new]
+	^(self streams detect: [:ea | ea isTranscriptStream] ifNone: [nil]) 
+		ifNil: [self addStream: TranscriptStream new]
 ]
 
 { #category : #'as yet unclassified' }
@@ -64,10 +62,8 @@ KomLogger >> detachTheTranscript [
 
 { #category : #'as yet unclassified' }
 KomLogger >> detachTranscripts [
-
-	(self streams select: [ :ea | ea isKindOf: TranscriptStream])
-		do: [ :ea | self removeStream: ea]
-
+	(self streams select: [:ea | ea isTranscriptStream]) 
+		do: [:ea | self removeStream: ea]
 ]
 
 { #category : #'as yet unclassified' }
@@ -102,20 +98,10 @@ KomLogger >> next [
 ]
 
 { #category : #'as yet unclassified' }
-KomLogger >> nextPut: anArray [
-
-	"Note: with a slightly improved design for the Transcript, the 
-	#endEntry hack would be entirely unnecessary...do it so that the Transcript
-	shows the log entry for each request as it arrives."
-
+KomLogger >> nextPut: anArray [ 
 	| logEntry |
-	logEntry := self logEntryFor: (anArray first) response: (anArray second).
-	self streams do:
-		[ :strm |
-		strm nextPutAll: logEntry.
-		(strm isKindOf: TranscriptStream) ifTrue: [strm endEntry]].
-
-
+	logEntry := self logEntryFor: anArray first response: anArray second.
+	self streams do: 	[:strm | strm nextPutAll: logEntry; endEntry]
 ]
 
 { #category : #'as yet unclassified' }

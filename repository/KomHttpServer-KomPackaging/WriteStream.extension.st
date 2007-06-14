@@ -1,6 +1,6 @@
 Extension { #name : #WriteStream }
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 WriteStream >> asHttpResponseTo: request [
 
 	^HttpResponse fromMIMEDocument: 

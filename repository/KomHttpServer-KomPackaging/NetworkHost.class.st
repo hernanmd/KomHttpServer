@@ -129,29 +129,18 @@ NetworkHost >> initializeFromString: aString defaultPort: dPort [
 ]
 
 { #category : #initialization }
-NetworkHost >> initializePortFromString: aString defaultPort: dPort [
-
+NetworkHost >> initializePortFromString: aString defaultPort: dPort [ 
 	| in tmp |
-	^(aString notNil and: [(in := aString indexOf: $:) > 0]) ifTrue: [
-		tmp := aString copyFrom: (in + 1) to: aString size.
-		tmp isPositiveInteger ifTrue: [ 
-			port := tmp asNumber 
-		] ifFalse: [
-			port := dPort.
-		].
-		aString copyFrom: 1 to: (in - 1).
-	] ifFalse: [ 
-		port := dPort. 
-		aString ifNotNil: [aString] ifNil: ['unknown']
-	].
-
-
-	
-
-	
-
-
-	
+	^(in := aString indexOf: $:) > 0 
+		ifTrue: 
+			[tmp := aString copyFrom: in + 1 to: aString size.
+			port := tmp isPositiveInteger 
+				ifTrue: [tmp asNumber]
+				ifFalse: [dPort].
+			aString copyFrom: 1 to: in - 1]
+		ifFalse: 
+			[port := dPort.
+			aString]
 ]
 
 { #category : #testing }
@@ -162,12 +151,9 @@ NetworkHost >> isNamedHost [
 
 { #category : #accessing }
 NetworkHost >> machineName [
-
-	^(self isNamedHost and: [ self name size >= 3 ]) ifTrue: [
-		self name at: 1
-	] ifFalse: [
-		nil
-	]
+	^(self isNamedHost and: [self name size >= 3]) 
+		ifTrue: [self name first]
+		ifFalse: [nil]
 ]
 
 { #category : #accessing }
@@ -178,14 +164,8 @@ NetworkHost >> name [
 
 { #category : #accessing }
 NetworkHost >> nameString [
-
-	| tmp nm |
-	tmp := (nm := self name) first asString.
-
-	2 to: nm size do: [ :in |
-		tmp := tmp, '.', (nm at: in) asString
-	].
-	^tmp
+	^ String streamContents: [ :str |
+			self name do: [:nm | str nextPutAll: nm printString] separatedBy: [str nextPut: $.] ]
 
 ]
 
@@ -202,56 +182,39 @@ NetworkHost >> type [
 ]
 
 { #category : #accessing }
-NetworkHost >> vhostName: nameIndex letter: letterIndex [
-
+NetworkHost >> vhostName: nameIndex letter: letterIndex [ 
 	"First get the name component"
+
 	| ni word nStart nEnd li |
 	ni := nameIndex asNumber.
-	ni = 0 
-		ifTrue: [word := self nameString]
-		ifFalse:
-			[ni < 0 
-				ifTrue: 
-					[nStart := name size + 1 + ni.
-					(nameIndex endsWith: '+') 
-						ifTrue: 
-							[nEnd := nStart.
-							nStart := 1]
-						ifFalse: [nEnd := nStart]]
+	word := ni = 0 
+				ifTrue: [self nameString]
 				ifFalse: 
-					[nStart := ni.
-					(nameIndex endsWith: '+') 
-						ifTrue: [nEnd := name size]
-						ifFalse: [nEnd := nStart]].
-			(nStart < 1 or: [nStart > name size])
-				ifTrue: [word := '_']
-				ifFalse:
-					[word := String streamContents: 
-						[ :strm |
-						(nStart to: nEnd)
-							do: [ :in | strm nextPutAll: (name at: in)]
-							separatedBy: [strm nextPut: $.]]]].
+					[nStart := ni < 0 ifTrue: [name size + 1 + ni] ifFalse: [ni].
+					nEnd := nStart.
+					(nameIndex endsWith: '+') ifTrue: [nStart := 1].
+					(nStart < 1 or: [nStart > name size]) 
+						ifTrue: ['_']
+						ifFalse: 
+							[String streamContents: 
+									[:strm | 
+									(nStart to: nEnd) do: [:in | strm nextPutAll: (name at: in)]
+										separatedBy: [strm nextPut: $.]]]].
 
 	"Now get the letters"
 	li := letterIndex asNumber.
 	li = 0 
 		ifTrue: [^word]
-		ifFalse:
+		ifFalse: 
 			[li < 0 
 				ifTrue: 
 					[nStart := word size + 1 + li.
-					(letterIndex endsWith: '+') 
-						ifTrue: 
-							[nEnd := nStart.
-							nStart := 1]
-						ifFalse: [nEnd := nStart]]
+					nEnd := nStart.
+					(letterIndex endsWith: '+') ifTrue: [nStart := 1]]
 				ifFalse: 
 					[nStart := li.
-					(letterIndex endsWith: '+') 
-						ifTrue: [nEnd := word size]
-						ifFalse: [nEnd := nStart]].
-			(nStart < 1 or: [nStart > name size])
+					nEnd := (letterIndex endsWith: '+') ifTrue: [word size] ifFalse: [nStart]].
+			(nStart < 1 or: [nStart > name size]) 
 				ifTrue: [^'_']
-				ifFalse: [^word copyFrom: nStart to: nEnd]].
-
+				ifFalse: [^word copyFrom: nStart to: nEnd]]
 ]

@@ -1,6 +1,6 @@
 Extension { #name : #ReadWriteStream }
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 ReadWriteStream >> asHttpResponseTo: request [
 
 	^HttpResponse fromStream: self

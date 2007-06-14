@@ -1,6 +1,6 @@
 Extension { #name : #TimeStamp }
 
-{ #category : #'*KomHttpServer-BaseExtensions' }
+{ #category : #'*KomHttpServer' }
 TimeStamp >> printCLFFormatOn: aStream [
 
 	| d t |
@@ -14,8 +14,8 @@ TimeStamp >> printCLFFormatOn: aStream [
 
 ]
 
-{ #category : #'*KomHttpServer-BaseExtensions' }
-TimeStamp >> printCLFFormatOn: aStream timezoneOffset: offset [ 
+{ #category : #'*KomHttpServer' }
+TimeStamp >> printCLFFormatOn: aStream timezoneOffset: zoneOffset [ 
 
 	| d t |
 	d := self date.
@@ -25,25 +25,28 @@ TimeStamp >> printCLFFormatOn: aStream timezoneOffset: offset [
 	aStream nextPut: $:.
 	t print24: true on: aStream.
 	aStream nextPut: $ .
-	offset < 0 
+	zoneOffset  < 0 
 		ifTrue: [aStream nextPut: $-]
 		ifFalse: [aStream nextPut: $+].
-	offset abs < 10 ifTrue: [aStream nextPut: $0].
-	offset abs printOn: aStream.
+	zoneOffset abs < 10 ifTrue: [aStream nextPut: $0].
+	zoneOffset abs printOn: aStream.
 	aStream nextPutAll: '00'.
 	aStream nextPut: $].
 
 ]
 
-{ #category : #'*KomHttpServer-BaseExtensions' }
+{ #category : #'*KomHttpServer' }
 TimeStamp >> printHttpFormat [
 
 	^String streamContents: [ :strm | self printHttpFormatOn: strm]
 ]
 
-{ #category : #'*KomHttpServer-BaseExtensions' }
+{ #category : #'*KomHttpServer' }
 TimeStamp >> printHttpFormatOn: aStream [
-
+	"Print receiver's date and time on aStream in HTTP format;
+	'<day>, DD <mth> YYYY HH:MM:SS GMT' ->	'Thu, 01 Dec 1994 16:00:00 GMT'
+	"
+	
 	| d t |
 	d := self date.
 	t := self time.

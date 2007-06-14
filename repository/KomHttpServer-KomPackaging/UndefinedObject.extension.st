@@ -1,6 +1,6 @@
 Extension { #name : #UndefinedObject }
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 UndefinedObject >> asHttpResponseTo: request [
 
 	^HttpResponse 

@@ -1,6 +1,6 @@
 Extension { #name : #Form }
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 Form >> asHttpResponseTo: request [
 	^HttpResponse fromMIMEDocument: self asWebImage
 ]

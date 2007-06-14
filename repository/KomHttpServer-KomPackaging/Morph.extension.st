@@ -1,6 +1,6 @@
 Extension { #name : #Morph }
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 Morph >> asHttpResponseTo: request [
 	^self imageForm asHttpResponseTo: request
 ]

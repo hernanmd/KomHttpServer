@@ -52,7 +52,7 @@ KomAuthDb >> includesUser: userName [
 
 { #category : #'initialize-release' }
 KomAuthDb >> initialize [
-
+	super initialize.
 	passwords := Dictionary new
 ]
 

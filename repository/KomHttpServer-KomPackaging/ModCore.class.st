@@ -78,35 +78,31 @@ ModCore >> isCore [
 
 { #category : #'as yet unclassified' }
 ModCore >> optionsResponse [
-
 	| opts |
-	opts := ModCore options ifNil: ['GET,HEAD,POST,OPTIONS,TRACE'].
+	opts := self class options ifNil: ['GET,HEAD,POST,OPTIONS,TRACE'].
 	^(HttpResponse fromString: '')
 		fieldAt: 'Allow' put: opts;
 		yourself
-
 ]
 
 { #category : #'as yet unclassified' }
 ModCore >> processHttp [
-
 	| request method |
 	request := HttpRequest current.
-	ModCore method: (method := request method).
-	ModCore path: request url.
-	ModCore host: request networkHost.
-	ModCore serverRoot: self serverRoot.
-
-	method = 'TRACE' ifTrue: 
-		[HttpResponse current: (self traceResponse: request).
-		^true].
-
+	self class
+		method: (method := request method);
+		path: request url;
+		host: request networkHost;
+		serverRoot: self serverRoot.
+	method = 'TRACE' 
+		ifTrue: 
+			[HttpResponse current: (self traceResponse: request).
+			^true].
 	self processSubModules ifTrue: [^true].
-
-	method = 'OPTIONS' ifTrue: 
-		[HttpResponse current: self optionsResponse.
-		^true].
-
+	method = 'OPTIONS' 
+		ifTrue: 
+			[HttpResponse current: self optionsResponse.
+			^true].
 	^false
 ]
 
@@ -118,13 +114,10 @@ ModCore >> serverRoot [
 ]
 
 { #category : #'as yet unclassified' }
-ModCore >> serverRoot: aDirOrString [
-
-	aDirOrString isString
-		ifTrue: [serverRoot := FileDirectory on: aDirOrString]
-		ifFalse: [serverRoot := aDirOrString]
-
-
+ModCore >> serverRoot: aDirOrString [ 
+	serverRoot := aDirOrString isString 
+		ifTrue: [FileDirectory on: aDirOrString]
+		ifFalse: [aDirOrString]
 ]
 
 { #category : #'as yet unclassified' }

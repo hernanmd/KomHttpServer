@@ -53,7 +53,7 @@ ModDoc class >> fullFilePath [
 	indicated by the current HttpRequest."
 
 	"Ordinarily, just use the following:"
-	(Smalltalk platformName ~= 'Mac OS')
+	(SmalltalkImage current platformName ~= 'Mac OS')
 		ifTrue: [^self documentRoot fullNameFor: self relativeFilePath].
 
 	"But! Because of Mac idiosyncracies, we must do:"
@@ -108,12 +108,10 @@ ModDoc >> documentRoot [
 ]
 
 { #category : #accessing }
-ModDoc >> documentRoot: aDirectoryOrString [
-
-	aDirectoryOrString isString
-		ifTrue: [documentRoot := FileDirectory on: aDirectoryOrString]
-		ifFalse: [documentRoot := aDirectoryOrString]
-
+ModDoc >> documentRoot: aDirectoryOrString [ 
+	documentRoot := aDirectoryOrString isString 
+		ifTrue: [FileDirectory on: aDirectoryOrString]
+		ifFalse: [aDirectoryOrString]
 ]
 
 { #category : #testing }
@@ -148,18 +146,17 @@ ModDoc >> processHttp [
 	| relativeFilePath path |
 	path := ModCore path.
 	relativeFilePath := self relativeFilePathFrom: path.
-	ModDoc documentRoot: self documentRoot.
-	ModDoc relativeFilePath: relativeFilePath.
-	self processSubModules ifTrue: [^true].
-	^false
+	self class
+		documentRoot: self documentRoot;
+		relativeFilePath: relativeFilePath.
+	^ self processSubModules.
 ]
 
 { #category : #accessing }
-ModDoc >> relativeFilePathFrom: path [
-
-	^((path size > 0 and: [(path at: 1) = $/]) 
+ModDoc >> relativeFilePathFrom: path [ 
+	^((path notEmpty and: [path first = $/]) 
 		ifTrue: [path copyFrom: 2 to: path size]
-		ifFalse: ['']) translateWith: DelimiterTranslation.
+		ifFalse: ['']) translateWith: DelimiterTranslation
 ]
 
 { #category : #validation }

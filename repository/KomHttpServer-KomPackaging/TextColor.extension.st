@@ -1,12 +1,12 @@
 Extension { #name : #TextColor }
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 TextColor >> printHtmlCloseTagOn: strm [
 	strm
 		nextPutAll: '</FONT>'
 ]
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 TextColor >> printHtmlOpenTagOn: strm [
 	strm
 		nextPutAll: '<FONT COLOR="#';

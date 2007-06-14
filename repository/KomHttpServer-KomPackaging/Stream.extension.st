@@ -1,6 +1,6 @@
 Extension { #name : #Stream }
 
-{ #category : #'*KomHttpServer-processing' }
+{ #category : #'*KomHttpServer' }
 Stream >> asHttpResponseTo: request [
 
 	^HttpResponse fromStream: self
@@ -10,4 +10,10 @@ Stream >> asHttpResponseTo: request [
 Stream >> isTranscriptStream [
 
 	^ false
+]
+
+{ #category : #'*KomHttpServer' }
+Stream >> mimeType [
+
+	^MIMEDocument defaultContentType
 ]

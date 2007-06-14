@@ -30,16 +30,16 @@ HttpFormDictionary >> at: key [
 ]
 
 { #category : #accessing }
-HttpFormDictionary >> at: key ifAbsent: aBlock [
+HttpFormDictionary >> at: key ifAbsent: aBlock [ 
 	| value valueSize |
-
 	value := super at: key ifAbsent: [^aBlock value].
 	valueSize := value size.
-	0 = valueSize ifTrue:["is this not absent?"
-		value := aBlock value]. 
-	1 = valueSize 
-		ifTrue:[value := value first]
-		ifFalse:[value := value copy].
+	0 = valueSize 
+		ifTrue: 
+			["is this not absent?"
+
+			value := aBlock value].
+	value := (1 = valueSize) ifTrue: [value first] ifFalse: [value copy].
 	^value
 ]
 
