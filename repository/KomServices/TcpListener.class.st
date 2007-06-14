@@ -111,9 +111,9 @@ TcpListener >> forkAndListenWhile: aBlock [
 { #category : #'initialize-release' }
 TcpListener >> initializeOnPort: aNumber handler: aValuableObject [
 
-	portNumber _ aNumber.
-	handler _ aValuableObject.
-	socketsToDestroy _ OrderedCollection new
+	portNumber := aNumber.
+	handler := aValuableObject.
+	socketsToDestroy := OrderedCollection new
 ]
 
 { #category : #private }
@@ -207,11 +207,11 @@ TcpListener >> pvtNewListener: backlogSize [
 TcpListener >> pvtOldListenLoop: aBlock [
 	"see comment on ConnectionQueue>>oldStyleListenLoop"
 	| socket |
-	socket _ nil.
+	socket := nil.
 	aBlock whileTrue:
 		[socket ifNil:
 			["try to create a new socket for listening"
-			socket _ Socket createIfFail: [nil]].
+			socket := Socket createIfFail: [nil]].
 		socket 
 			ifNil: [Process terminationOkDuring: [(Delay forMilliseconds: 100) wait]]
 			ifNotNil:
@@ -225,10 +225,10 @@ TcpListener >> pvtOldListenLoop: aBlock [
 					ifTrue: 
 						["connection established"
 						handler value: socket.
-						socket _ nil]
+						socket := nil]
 					ifFalse:
 						[socket isWaitingForConnection
-							ifFalse: [socket destroy. socket _ nil]]]]
+							ifFalse: [socket destroy. socket := nil]]]]
 ]
 
 { #category : #accessing }

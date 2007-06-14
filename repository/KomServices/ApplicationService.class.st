@@ -65,7 +65,7 @@ ApplicationService class >> defaultPriority [
 ApplicationService class >> initialize [
 	"self initialize"
 
-	Services _ Set new.
+	Services := Set new.
 	Smalltalk addToStartUpList: self.
 	Smalltalk addToShutDownList: self
 ]
@@ -140,7 +140,7 @@ ApplicationService class >> startUp [
 { #category : #private }
 ApplicationService >> addStopSignal [
 
-	stopSignal ifNil: [stopSignal _ OrderedCollection new].
+	stopSignal ifNil: [stopSignal := OrderedCollection new].
 	^stopSignal add: Semaphore new.
 ]
 
