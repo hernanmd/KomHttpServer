@@ -58,22 +58,22 @@ HttpRequest class >> decodeUrlEncodedForm: string [
 { #category : #parsing }
 HttpRequest class >> decodeUrlEncodedForm: string multipleValues: boolean [
 	| dict key value start end eqSignPos more |
-	dict _ boolean ifTrue: [HttpFormDictionary new] ifFalse: [Dictionary new].
+	dict := boolean ifTrue: [HttpFormDictionary new] ifFalse: [Dictionary new].
 	string isEmptyOrNil ifTrue: [^dict].
-	more _ true.
-	start _ 1.
-	[end _ string indexOf: $& startingAt: start.
+	more := true.
+	start := 1.
+	[end := string indexOf: $& startingAt: start.
 	end == 0
-		ifTrue: [end _ string size. more _ false]
-		ifFalse: [end _ end - 1].
-	eqSignPos _ string indexOf: $= startingAt: start.
+		ifTrue: [end := string size. more := false]
+		ifFalse: [end := end - 1].
+	eqSignPos := string indexOf: $= startingAt: start.
 	(eqSignPos > end or: [eqSignPos == 0])
-		ifTrue: [key _ (key _ string copyFrom: start to: end) unescapePercentsWithTextEncoding: nil.
-			value _ '']
-		ifFalse: [key _ (key _ string copyFrom: start to: eqSignPos-1) unescapePercentsWithTextEncoding: nil.
-			value _ (value _ string copyFrom: eqSignPos+1 to: end) unescapePercentsWithTextEncoding: nil].
+		ifTrue: [key := (key := string copyFrom: start to: end) unescapePercentsWithTextEncoding: nil.
+			value := '']
+		ifFalse: [key := (key := string copyFrom: start to: eqSignPos-1) unescapePercentsWithTextEncoding: nil.
+			value := (value := string copyFrom: eqSignPos+1 to: end) unescapePercentsWithTextEncoding: nil].
 	self addKey: key value: value toForm: dict multipleValues: boolean.
-	start _ end + 2.
+	start := end + 2.
 	more] whileTrue.
 
 	^dict
