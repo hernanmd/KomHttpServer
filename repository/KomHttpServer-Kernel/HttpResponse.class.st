@@ -143,7 +143,7 @@ HttpResponse class >> initializeStatusCodes [
 	"  HttpResponse initializeStatusCodes  "
 
 	StatusCodes := IdentityDictionary new
-		"1xx: Meta statsus codes"
+		"1xx: Meta status codes"
 		at: #continue				put: ('100' -> 'Continue');
 		at: #switchingProtocols	put: ('101' -> 'Switching Protocols');
 		at: #processing			put: ('102' -> 'Processing'); "WebDav RFC: 2518"
@@ -173,13 +173,27 @@ HttpResponse class >> initializeStatusCodes [
 		at: #notFound					put: ('404' -> 'Not Found');
 		at: #notAllowed				put: ('405' -> 'Method Not Allowed');
 		at: #notAcceptable			put: ('406' -> 'Not Acceptable');
-		at: #unprocessableEntity	put: ('422' -> 'Unprocessable Entity'); 	"WebDav RFC: 2518"
-		at: #locked				put: ('423' -> 'Locked'); 					"WebDav RFC: 2518"
-		at: #failedDependency	put: ('424' -> 'Failed Dependency'); 		"WebDav RFC: 2518"
-		at: #serverError			put: ('500' -> 'Internal Server Error');
-		at: #notImplemented		put: ('501' -> 'Not Implemented');
-		at: #badGateway		put: ('502' -> 'Bad Gateway');
-		at: #serviceUnavailable	put: ('503' -> 'Service Unavailable');
+		at: #proxyAuthRequired		put: ('407' -> 'Proxy Authentication Required');
+		at: #requestTimeout			put: ('408' -> 'Request Timeout');
+		at: #conflict					put: ('409' -> 'Conflict');
+		at: #gone						put: ('410' -> 'Gone');
+		at: #lenghtRequired			put: ('411' -> 'Lenght Required');
+		at: #preconditionFailed		put: ('412' -> 'Precondition Failed');
+		at: #entityTooLarge			put: ('413' -> 'Request Entity Too Large');
+		at: #uriTooLong				put: ('414' -> 'Request-URI Too Long');
+		at: #unsupportedMediaType	put: ('415' -> 'Unsupported Media Type');
+		at: #rangeNotSatisfiable	put: ('416' -> 'Requested Range Not Satisfiable');
+		at: #expectationFailed		put: ('417' -> 'Expectation Failed');
+		at: #unprocessableEntity	put: ('422' -> 'Unprocessable Entity'); "WebDav RFC: 2518"
+		at: #locked					put: ('423' -> 'Locked'); "WebDav RFC: 2518"
+		at: #failedDependency		put: ('424' -> 'Failed Dependency'); "WebDav RFC: 2518"
+		"5xx: Server-Side Error status codes"
+		at: #serverError				put: ('500' -> 'Internal Server Error');
+		at: #notImplemented			put: ('501' -> 'Not Implemented');
+		at: #badGateway				put: ('502' -> 'Bad Gateway');
+		at: #serviceUnavailable		put: ('503' -> 'Service Unavailable');
+		at: #gatewayTimeout			put: ('504' -> 'Gateway Timeout');
+		at: #versionNotSupported	put: ('505' -> 'HTTP Version Not Supported');
 		at: #InsufficientStorage	put: ('507' -> 'Insufficient Storage'); 	"WebDav RFC: 2518"
  		yourself.
 
