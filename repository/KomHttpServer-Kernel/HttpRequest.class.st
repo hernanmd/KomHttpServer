@@ -346,6 +346,12 @@ HttpRequest >> initializeFromStream: aStream [
 ]
 
 { #category : #testing }
+HttpRequest >> isDeleteRequest [
+
+	^self method = 'DELETE'
+]
+
+{ #category : #testing }
 HttpRequest >> isGetRequest [
 
 	^self method = 'GET'
@@ -393,6 +399,12 @@ HttpRequest >> isPostMultipart [
 HttpRequest >> isPostRequest [
 
 	^self method = 'POST'
+]
+
+{ #category : #testing }
+HttpRequest >> isPutRequest [
+
+	^self method = 'PUT'
 ]
 
 { #category : #'user authentication' }
