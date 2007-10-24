@@ -50,7 +50,7 @@ ApplicationService class >> addService: aService [
 { #category : #accessing }
 ApplicationService class >> allServices [
 	"Return all registered services.
-	Do not override this methid, override services instead."
+	Do not override this method, override #services instead."
 
 	^Services
 ]
@@ -86,7 +86,7 @@ ApplicationService class >> removeService: aService [
 { #category : #accessing }
 ApplicationService class >> serviceNamed: aString [
 
-	^self services 
+	^self 
 		serviceNamed: aString
 		ifAbsent: [self error: 'No service by that name']
 ]
