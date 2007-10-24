@@ -68,10 +68,10 @@ HttpRequest class >> decodeUrlEncodedForm: string multipleValues: boolean [
 		ifFalse: [end := end - 1].
 	eqSignPos := string indexOf: $= startingAt: start.
 	(eqSignPos > end or: [eqSignPos == 0])
-		ifTrue: [key := (key := string copyFrom: start to: end) unescapePercents.
+		ifTrue: [key := (key := string copyFrom: start to: end) unescapePercentsWithTextEncoding: nil.
 			value := '']
-		ifFalse: [key := (key := string copyFrom: start to: eqSignPos-1) unescapePercents.
-			value := (value := string copyFrom: eqSignPos+1 to: end) unescapePercents].
+		ifFalse: [key := (key := string copyFrom: start to: eqSignPos-1) unescapePercentsWithTextEncoding: nil.
+			value := (value := string copyFrom: eqSignPos+1 to: end) unescapePercentsWithTextEncoding: nil].
 	self addKey: key value: value toForm: dict multipleValues: boolean.
 	start := end + 2.
 	more] whileTrue.
@@ -330,7 +330,7 @@ HttpRequest >> initStatusString: aString [
 		ifTrue: 
 			[self method: statusLine first.
 			rawUrl := statusLine second.
-			url := (rawUrl copyUpTo: $?) unescapePercents.
+			url := (rawUrl copyUpTo: $?) unescapePercentsWithTextEncoding: nil.
 			url size + 1 < rawUrl size 
 				ifTrue: [self queryString: (rawUrl copyFrom: url size + 2 to: rawUrl size)].
 			self protocol: statusLine third asUppercase]
@@ -556,11 +556,15 @@ HttpRequest >> parseCookies: aString [
 			[:pairStr | 
 			| pair |
 			pair := pairStr findTokens: '='.
-			pair size = 2 
+			pair size > 0 
 				ifTrue: 
 					[| key value |
 					key := pair first withBlanksTrimmed asSymbol.
-					value := pair second withBlanksTrimmed.
+					value := pair size > 1 
+						ifTrue:
+							[pair second withBlanksTrimmed]
+						ifFalse:
+							[nil].
 					dict at: key put: value]
 				ifFalse: 
 					["self log: 'Cookie invalid pair format: ''' , pairStr , ''''"
@@ -569,7 +573,7 @@ HttpRequest >> parseCookies: aString [
 	^dict
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 HttpRequest >> pathParts [
 
 	^self url findTokens: '/'
@@ -664,16 +668,12 @@ HttpRequest >> rawPostFields [
 	"reasons: 1) lazy form processing;
 		2) allow the app to specify whether it wants multiple values for fields"
 
-	^self propertyAt: #rawPostFields ifAbsentPut: [
-
-		(self isPostRequest and: [ 
-			self contentType = MIMEDocument contentTypeFormData 
-		]) ifTrue: [
-			stream next: self contentLength
-		] ifFalse: [
-			''
-		].
-	]
+	^self 
+		propertyAt: #rawPostFields 
+		ifAbsentPut: 
+			[(self isPostRequest) 
+				ifTrue: [stream next: self contentLength]
+				ifFalse: ['']]
 ]
 
 { #category : #accessing }

@@ -70,7 +70,7 @@ HttpAdaptor class >> dataTimeout: seconds [
 { #category : #preferences }
 HttpAdaptor class >> keepAlive [
 
-	^#'HttpAdaptor-keepAlive' binding ifNil: [true]
+	^#'HttpAdaptor-keepAlive' binding ifNil: [false]
 ]
 
 { #category : #preferences }
