@@ -7,7 +7,7 @@ Class {
 	#classVars : [
 		'Default'
 	],
-	#category : #'DynamicBindings-Core'
+	#category : #DynamicBindings
 }
 
 { #category : #exceptionDescription }
@@ -18,10 +18,10 @@ BindingsLocator >> defaultAction [
 	#valueWithBindings:."
 
 	| tmp defaultActionCtx |
-	tmp := thisContext.
-	[tmp sender notNil] whileTrue: [tmp := tmp sender].
+	tmp _ thisContext.
+	[tmp sender notNil] whileTrue: [tmp _ tmp sender].
 
-	defaultActionCtx := thisContext.
+	defaultActionCtx _ thisContext.
 	[	
 		tmp swapSender: thisContext sender.
 		thisContext sender sender sender swapSender: nil.
