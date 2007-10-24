@@ -58,7 +58,7 @@ HttpService class >> initialize [
 HttpService class >> initializeServerType [
 	"self initializeServerType"
 
-	ServerType _ String streamContents:
+	ServerType := String streamContents:
 		[ :s |
 		s nextPutAll: 'Comanche/'.
 		s nextPutAll: self version.
@@ -212,7 +212,7 @@ HttpService >> mode: aSymbol [
 	"aSymbol <#deployment | #debug | #verbose > - Sets the debugging
 	mode of the receiver."
 
-	mode _ aSymbol
+	mode := aSymbol
 ]
 
 { #category : #pluggable }
@@ -249,7 +249,7 @@ HttpService >> perceivedHostName [
 	on the server."
 
 	| request |
-	(request _ HttpRequest current) ifNotNil: 
+	(request := HttpRequest current) ifNotNil: 
 		[^request networkHost nameString].
 
 	^self serverHostName
@@ -266,7 +266,7 @@ HttpService >> perceivedPortNumber [
 	listening on."
 
 	| request |
-	(request _ HttpRequest current) ifNotNil: 
+	(request := HttpRequest current) ifNotNil: 
 		[^request networkHost port].
 
 	^self portNumber
@@ -282,13 +282,13 @@ HttpService >> plug [
 { #category : #pluggable }
 HttpService >> plug: aMonadicValuable [
 
-	plug _ aMonadicValuable
+	plug := aMonadicValuable
 ]
 
 { #category : #'startup and shutdown' }
 HttpService >> prepareForStartup [
 
-	ServerHostName _ nil.
+	ServerHostName := nil.
 	self class initializeServerType.
 ]
 
@@ -334,7 +334,7 @@ HttpService >> serverHostName [
 	is started"
 
 	^ServerHostName ifNil:
-		[ServerHostName _ NetNameResolver 
+		[ServerHostName := NetNameResolver 
 								nameForAddress: NetNameResolver localHostAddress 
 								timeout: 5]
 

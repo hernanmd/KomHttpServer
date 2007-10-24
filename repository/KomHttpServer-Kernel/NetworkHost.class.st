@@ -37,7 +37,7 @@ NetworkHost >> domainString [
 
 	| sz |
 	^self isNamedHost ifTrue: [
-		((sz _ self name size) >= 2) ifTrue: [
+		((sz := self name size) >= 2) ifTrue: [
 			(self name at: (sz - 1)), '.', self name last.
 		] ifFalse: [
 			''
@@ -50,7 +50,7 @@ NetworkHost >> domainString [
 { #category : #accessing }
 NetworkHost >> fileSystemPath [
 	| delim |
-	delim _ FileDirectory pathNameDelimiter.
+	delim := FileDirectory pathNameDelimiter.
 
 	^String streamContents: 
 		[ :strm |
@@ -82,13 +82,13 @@ NetworkHost >> initializeFromIPAddress: str [
 
 	| nums |
 	((str occurrencesOf: $.) = 3) ifTrue: [
-		nums _ (str findTokens: '.') collect: [ :ea | 
+		nums := (str findTokens: '.') collect: [ :ea | 
 			ea isPositiveInteger ifTrue: [
 				ea asNumber
 			] ifFalse: [ ^self ]
 		].
-		name _ nums.
-		type _ #address.
+		name := nums.
+		type := #address.
 	].	
 	
 
@@ -99,8 +99,8 @@ NetworkHost >> initializeFromIPAddress: str [
 { #category : #initialization }
 NetworkHost >> initializeFromNamePath: namePath [
 
-	name _ namePath.
-	type _ #name.
+	name := namePath.
+	type := #name.
 
 	
 ]
@@ -117,12 +117,12 @@ NetworkHost >> initializeFromString: aString [
 NetworkHost >> initializeFromString: aString defaultPort: dPort [
 
 	| tmp |
-	fullName _ aString.
-	tmp _ self initializePortFromString: aString defaultPort: dPort.
+	fullName := aString.
+	tmp := self initializePortFromString: aString defaultPort: dPort.
 	self initializeFromIPAddress: tmp.
 	name ifNil: [
-		name _ tmp findTokens: '.'.
-		type _ #name.
+		name := tmp findTokens: '.'.
+		type := #name.
 	].
 
 	

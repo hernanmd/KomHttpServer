@@ -29,18 +29,15 @@ Class {
 
 { #category : #processing }
 ModFile >> processHttp [
-	"This method uses StandardFileStream explicitly instead
-	of relying on FileStream class>>concreteStream, since in this
-	case we just need to return the file 'as is' binary."
-
 	| fullFilePath method |
 	method := ModCore method.
 	(#(#GET #POST) includes: method) ifFalse: [^false].
 	fullFilePath := ModDoc fullFilePath.
 	(FileStream isAFileNamed: fullFilePath) ifFalse: [^false].
 	self processSubModules ifTrue: [^true].
-	HttpResponse current: (HttpResponse 
-				fromStream: (StandardFileStream readOnlyFileNamed: fullFilePath)).
+	HttpResponse current:
+		(HttpResponse fromStream:
+			(FileDirectory default readOnlyFileNamed: fullFilePath)).
 	^true
 ]
 

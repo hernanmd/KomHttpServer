@@ -136,7 +136,7 @@ ModuleAssembly >> lookupMod: testBlock ifFound: foundBlock ifNotFound: notFoundB
 	| thisMod |
 	moduleStack size to: 1 by: -1 do: 
 		[ :i |
-		thisMod _ moduleStack at: i.
+		thisMod := moduleStack at: i.
 		(testBlock value: thisMod)
 			ifTrue: [^foundBlock value: thisMod]].
 	^notFoundBlock value
@@ -176,10 +176,10 @@ ModuleAssembly >> pushModule: aModule andDo: aBlock [
 	push a new module on the stack without popping it"
 
 	| stackSize |
-	stackSize _ moduleStack size.
+	stackSize := moduleStack size.
 	self pushModule: aModule.
 	aBlock value.
-	moduleStack _ moduleStack copyFrom: 1 to: stackSize.
+	moduleStack := moduleStack copyFrom: 1 to: stackSize.
 
 
 ]

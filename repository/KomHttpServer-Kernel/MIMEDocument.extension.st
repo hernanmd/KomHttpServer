@@ -13,7 +13,7 @@ MIMEDocument class >> contentTypeTextCSS [
 { #category : #'*KomHttpServer' }
 MIMEDocument class >> defaultMIMEdatabase [
 	| d |
-	(d _ Dictionary new)
+	(d := Dictionary new)
 	at: 'html' put: 'text/html';
 	at: 'htm' put: 'text/html';
 	at: 'xml' put: 'text/xml';
@@ -32,7 +32,7 @@ MIMEDocument class >> defaultMIMEdatabase [
 { #category : #'*KomHttpServer' }
 MIMEDocument class >> extendedMIMEdatabase [
 	| d |
-	(d _ self defaultMIMEdatabase)
+	(d := self defaultMIMEdatabase)
 	at: 'sts' put: 'application/x-squeak-source';
 	at: 'pr' put: 'application/x-squeak-project';
 	at: 'hqx' put: 'application/mac-binhex40';

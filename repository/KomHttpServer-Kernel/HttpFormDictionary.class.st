@@ -25,6 +25,12 @@ Class {
 }
 
 { #category : #accessing }
+HttpFormDictionary >> at: key [
+	^ self at: key ifAbsent: [self errorKeyNotFound]
+
+]
+
+{ #category : #accessing }
 HttpFormDictionary >> at: key ifAbsent: aBlock [ 
 	| value valueSize |
 	value := super at: key ifAbsent: [^aBlock value].

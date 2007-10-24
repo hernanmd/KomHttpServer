@@ -35,14 +35,14 @@ ModAutoIndex class >> splitPath: fullName to: pathAndNameBlock [
 	fullName last = $/
 		ifTrue: [tmpName := fullName copyFrom: 1 to: fullName size - 1]
 		ifFalse: [tmpName := fullName].
-	delimiter _ $/.
-	(i _ tmpName findLast: [:c | c = delimiter]) = 0
+	delimiter := $/.
+	(i := tmpName findLast: [:c | c = delimiter]) = 0
 		ifTrue:
-			[dirName _ String new.
-			localName _ tmpName]
+			[dirName := String new.
+			localName := tmpName]
 		ifFalse:
-			[dirName _ tmpName copyFrom: 1 to: (i - 1 max: 1).
-			localName _ tmpName copyFrom: i + 1 to: tmpName size].
+			[dirName := tmpName copyFrom: 1 to: (i - 1 max: 1).
+			localName := tmpName copyFrom: i + 1 to: tmpName size].
 
 	^ pathAndNameBlock value: dirName value: localName
 ]
@@ -60,16 +60,16 @@ ModAutoIndex >> dirEntries: entries request: request on: strm padNamesTo: namePa
 ModAutoIndex >> directoryListing: request directory: dir [
 
 	| entries namePad sizePad |
-	entries _ dir entries.
+	entries := dir entries.
 	(request fields includesKey: 'S') ifTrue: 
-		[entries _ entries sortBy: [ :a :b | a fileSize <= b fileSize ]].
+		[entries := entries sortBy: [ :a :b | a fileSize <= b fileSize ]].
 	(request fields includesKey: 'M') ifTrue: 
-		[entries _ entries sortBy: [ :a :b | a modificationTime <= b modificationTime ]].
+		[entries := entries sortBy: [ :a :b | a modificationTime <= b modificationTime ]].
 	(request fields includesKey: 'N') ifTrue: 
-		[entries _ entries sortBy: [ :a :b | a name <= b name ]].
+		[entries := entries sortBy: [ :a :b | a name <= b name ]].
 
-	namePad _ (entries inject: 16 into: [ :max :ea | ea name size max: max ]) + 1.
-	sizePad _ (entries inject: 4 into: [ :max :ea | ea fileSize printString size max: max ]) + 1.
+	namePad := (entries inject: 16 into: [ :max :ea | ea name size max: max ]) + 1.
+	sizePad := (entries inject: 4 into: [ :max :ea | ea fileSize printString size max: max ]) + 1.
 
 	^String streamContents: [ :strm |
 		strm nextPutAll: '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">'.
@@ -97,7 +97,7 @@ ModAutoIndex >> directoryListing: request directory: dir [
 ModAutoIndex >> entry: entry on: strm padNamesTo: namePad padSizesTo: sizePad [
 
 	| sizeString |
-	sizeString _ entry fileSize printString.
+	sizeString := entry fileSize printString.
 	entry isDirectory 
 		ifTrue: [strm nextPutAll: '[DIR]']
 		ifFalse: [strm nextPutAll: '     '].
@@ -123,8 +123,8 @@ ModAutoIndex >> entry: entry on: strm padNamesTo: namePad padSizesTo: sizePad [
 ModAutoIndex >> parentEntry: request on: strm [
 
 	| tmp parentPath |
-	tmp _ request url copyFrom: 1 to: (request url size - 1).
-	parentPath _ self class splitPath: tmp to: [ :path :nm | path].
+	tmp := request url copyFrom: 1 to: (request url size - 1).
+	parentPath := self class splitPath: tmp to: [ :path :nm | path].
 	parentPath last = $/ ifFalse: [parentPath := parentPath, '/'].
 
 	strm nextPutAll: '[DIR] <a HREF="'.

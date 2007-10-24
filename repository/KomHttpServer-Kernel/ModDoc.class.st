@@ -68,7 +68,7 @@ ModDoc class >> fullFilePath [
 ModDoc class >> initialize [
 	"self initialize"
 
-	DelimiterTranslation _ (0 to: 255) as: ByteArray.
+	DelimiterTranslation := (0 to: 255) as: ByteArray.
 	DelimiterTranslation 
 		at: ($/ asciiValue + 1) 
 		put: FileDirectory pathNameDelimiter asciiValue.

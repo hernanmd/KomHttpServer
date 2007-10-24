@@ -4,8 +4,8 @@ Extension { #name : #TimeStamp }
 TimeStamp >> printCLFFormatOn: aStream [
 
 	| d t |
-	d _ self date.
-	t _ self time.
+	d := self date.
+	t := self time.
 	aStream nextPut: $[.
 	d printOn: aStream format: #(1 2 3 $/ 2 1 2).
 	aStream nextPut: $:.
@@ -48,8 +48,8 @@ TimeStamp >> printHttpFormatOn: aStream [
 	"
 	
 	| d t |
-	d _ self date.
-	t _ self time.
+	d := self date.
+	t := self time.
 	aStream nextPutAll: (d weekday copyFrom: 1 to: 3).
 	aStream nextPutAll: ', '.
 	d printOn: aStream format: #(1 2 3 $  2 1 2).

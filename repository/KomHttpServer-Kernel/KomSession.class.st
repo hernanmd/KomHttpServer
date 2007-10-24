@@ -47,7 +47,7 @@ KomSession class >> new [
 KomSession class >> nextSessionID [
 	self flag: #TODO.
 	"more robust unique number"
-	LastSessionID _ LastSessionID + 1.
+	LastSessionID := LastSessionID + 1.
 	^ (65535 atRandom hex allButFirst: 3)
 		, (LastSessionID hex allButFirst: 3)
 		, (65535 atRandom hex allButFirst: 3)

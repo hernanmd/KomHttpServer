@@ -91,7 +91,7 @@ MultipartChunk >> multipartBoundary [
 
 { #category : #'initialize-release' }
 MultipartChunk >> multipartBoundary: aString [
-	multipartBoundary _ aString
+	multipartBoundary := aString
 ]
 
 { #category : #accessing }

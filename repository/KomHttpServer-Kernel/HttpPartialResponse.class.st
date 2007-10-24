@@ -18,7 +18,7 @@ Class {
 
 { #category : #accessing }
 HttpPartialResponse >> producerBlock: aBlock [
-	producerBlock _ aBlock
+	producerBlock := aBlock
 ]
 
 { #category : #responding }

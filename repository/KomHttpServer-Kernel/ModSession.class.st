@@ -74,7 +74,7 @@ ModSession >> cleanup [
 	cutoff := lastCleanup - secondsToLive.
 	sessions keys do: 
 		[:key | 
-		session _ sessions at: key.
+		session := sessions at: key.
 		(session lastAccess < cutoff) ifTrue: 
 			[sessions removeKey: key]]
 ]
@@ -85,7 +85,7 @@ ModSession >> extractSession: aRequest [
 	| session |
 	mutex critical: 
 		[self checkForCleanup.
-		session _ self 
+		session := self 
 					basicExtractSession: aRequest 
 					ifAbsent: [self newSession].
 		session touch].
@@ -113,7 +113,7 @@ ModSession >> isSession [
 ModSession >> newSession [
 	"PRIVATE: creates a new Session and stores it"
 	| session |
-	session _ KomSession new.
+	session := KomSession new.
 	sessions at: session id put: session.
 	^ session
 ]
@@ -122,7 +122,7 @@ ModSession >> newSession [
 ModSession >> processHttp [
 
 	| session |
-	session _ self extractSession: HttpRequest current.
+	session := self extractSession: HttpRequest current.
 	KomSession current: session.
 	self processSubModules ifFalse: [^false].
 	HttpResponse current

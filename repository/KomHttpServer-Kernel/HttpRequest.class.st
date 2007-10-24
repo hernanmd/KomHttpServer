@@ -58,22 +58,22 @@ HttpRequest class >> decodeUrlEncodedForm: string [
 { #category : #parsing }
 HttpRequest class >> decodeUrlEncodedForm: string multipleValues: boolean [
 	| dict key value start end eqSignPos more |
-	dict _ boolean ifTrue: [HttpFormDictionary new] ifFalse: [Dictionary new].
+	dict := boolean ifTrue: [HttpFormDictionary new] ifFalse: [Dictionary new].
 	string isEmptyOrNil ifTrue: [^dict].
-	more _ true.
-	start _ 1.
-	[end _ string indexOf: $& startingAt: start.
+	more := true.
+	start := 1.
+	[end := string indexOf: $& startingAt: start.
 	end == 0
-		ifTrue: [end _ string size. more _ false]
-		ifFalse: [end _ end - 1].
-	eqSignPos _ string indexOf: $= startingAt: start.
+		ifTrue: [end := string size. more := false]
+		ifFalse: [end := end - 1].
+	eqSignPos := string indexOf: $= startingAt: start.
 	(eqSignPos > end or: [eqSignPos == 0])
-		ifTrue: [key _ (key _ string copyFrom: start to: end) unescapePercents.
-			value _ '']
-		ifFalse: [key _ (key _ string copyFrom: start to: eqSignPos-1) unescapePercents.
-			value _ (value _ string copyFrom: eqSignPos+1 to: end) unescapePercents].
+		ifTrue: [key := (key := string copyFrom: start to: end) unescapePercents.
+			value := '']
+		ifFalse: [key := (key := string copyFrom: start to: eqSignPos-1) unescapePercents.
+			value := (value := string copyFrom: eqSignPos+1 to: end) unescapePercents].
 	self addKey: key value: value toForm: dict multipleValues: boolean.
-	start _ end + 2.
+	start := end + 2.
 	more] whileTrue.
 
 	^dict
@@ -118,24 +118,30 @@ HttpRequest class >> hashPassword: aPassword [
 
 { #category : #'initialize-release' }
 HttpRequest class >> initialize [
-	EndOfRequestHeaderMarker _ String crlf, String crlf
+	EndOfRequestHeaderMarker := String crlf, String crlf
+]
+
+{ #category : #'instance creation' }
+HttpRequest class >> new [
+	"Kept for backwards compatibility"
+	^super new initialize
 ]
 
 { #category : #parsing }
 HttpRequest class >> parseHttpHeader: string [
 	| dict key value start end more colonPos fieldDelims lastKey keyValueDelim crlf |
-	dict _ Dictionary new.
-	crlf _ String crlf.
+	dict := Dictionary new.
+	crlf := String crlf.
 	string isEmptyOrNil ifTrue: [^dict].
-	fieldDelims _ crlf asCharacterSet.
-	keyValueDelim _ $:.
-	more _ true.
-	start _ end _ 1.
-	lastKey _ ''.
-	[end _ string indexOfAnyOf: fieldDelims startingAt: start.
+	fieldDelims := crlf asCharacterSet.
+	keyValueDelim := $:.
+	more := true.
+	start := end := 1.
+	lastKey := ''.
+	[end := string indexOfAnyOf: fieldDelims startingAt: start.
 	end == 0
-		ifTrue: [end _ string size. more _ false]
-		ifFalse: [end _ end - 1].
+		ifTrue: [end := string size. more := false]
+		ifFalse: [end := end - 1].
 	(end >= start and: [start < string size])
 		ifTrue: [
 			(string at: start) isSeparator
@@ -144,19 +150,19 @@ HttpRequest class >> parseHttpHeader: string [
 						at: lastKey
 						modify: [:item | item, (string copyFrom: start to: end)]]
 				ifFalse:
-					[colonPos _ string indexOf: keyValueDelim startingAt: start.
+					[colonPos := string indexOf: keyValueDelim startingAt: start.
 					(colonPos > end or: [colonPos == 0])
 						ifTrue:
-							[key _ (string copyFrom: start to: end) translateToLowercase.
-							value _ '']
+							[key := (string copyFrom: start to: end) translateToLowercase.
+							value := '']
 						ifFalse:
-							[key _ (string copyFrom: start to: colonPos-1) translateToLowercase.
-							value _ (string copyFrom: colonPos+1 to: end) withBlanksTrimmed]].
+							[key := (string copyFrom: start to: colonPos-1) translateToLowercase.
+							value := (string copyFrom: colonPos+1 to: end) withBlanksTrimmed]].
 			key isEmpty
 				ifFalse: [dict at: key put: value.
-					lastKey _ key.
-					key _ ''].
-			start _ string skipDelimiters: crlf startingAt: end+1].
+					lastKey := key.
+					key := ''].
+			start := string skipDelimiters: crlf startingAt: end+1].
 	more] whileTrue.
 
 	^dict
@@ -193,9 +199,9 @@ HttpRequest >> contentLength [
 HttpRequest >> contentType [
 	| i contentType |
 	^self propertyAt: #contentType ifAbsentPut: [
-		contentType _ self header at: 'content-type' ifAbsent: [self defaultContentType].
-		contentType ifNotNil: [i _ contentType indexOf: $;. "get rid of charset field"
-			i > 0 ifTrue: [contentType _ contentType copyFrom: 1 to: i-1]].
+		contentType := self header at: 'content-type' ifAbsent: [self defaultContentType].
+		contentType ifNotNil: [i := contentType indexOf: $;. "get rid of charset field"
+			i > 0 ifTrue: [contentType := contentType copyFrom: 1 to: i-1]].
 		contentType asLowercase]
 ]
 
@@ -237,7 +243,7 @@ HttpRequest >> defaultUrl [
 { #category : #'initialize-release' }
 HttpRequest >> destroy [
 	stream close.
-	stream _ nil
+	stream := nil
 ]
 
 { #category : #accessing }
@@ -261,7 +267,7 @@ HttpRequest >> getFields [
 	"retrieve fields encoded in the URL: http://aha/ha?a=1&b=2"
 	| in |
 	^self propertyAt: #getFields ifAbsentPut: [
-		((in _ rawUrl indexOf: $?) > 0) ifTrue: [
+		((in := rawUrl indexOf: $?) > 0) ifTrue: [
 			self class decodeUrlEncodedForm: 
 				(rawUrl copyFrom: (in + 1) to: rawUrl size)
 				multipleValues: self multiValueFormFields
@@ -291,7 +297,7 @@ HttpRequest >> header [
 
 { #category : #accessing }
 HttpRequest >> header: aDict [
-	header _ aDict
+	header := aDict
 ]
 
 { #category : #accessing }
@@ -339,7 +345,7 @@ HttpRequest >> initialize [
 
 { #category : #'initialize-release' }
 HttpRequest >> initializeFromStream: aStream [
-	stream _ aStream.
+	stream := aStream.
 	self initRemoteAddress.
 	self timestamp: Time totalSeconds.
 	self readRequestHeaderFrom: stream.
@@ -368,19 +374,19 @@ HttpRequest >> isPersistent [
 	| proto answer |
 
 	self propertyAt: #persistentConnection ifPresent: [ :x | ^x ].
-	proto _ self protocol.
+	proto := self protocol.
 
 	"If we can't figure out the protocol, default to non-persistent connections"
-	answer _ false.
+	answer := false.
 
 	"For HTTP/1.0, the default is non-persistent connections"
 	proto = 'HTTP/1.0' ifTrue:
-		[answer _ (self header at: 'connection' ifAbsent: ['']) 
+		[answer := (self header at: 'connection' ifAbsent: ['']) 
 			asLowercase = 'keep-alive'].
 
 	"For HTTP/1.1, the default is persistent connections"
 	proto = 'HTTP/1.1' ifTrue:
-		[answer _ (self header at: 'connection' ifAbsent: ['']) 
+		[answer := (self header at: 'connection' ifAbsent: ['']) 
 			asLowercase ~= 'close'].
 
 	self propertyAt: #persistentConnection put: answer.
@@ -410,11 +416,11 @@ HttpRequest >> isPutRequest [
 { #category : #'user authentication' }
 HttpRequest >> isUsername: aUsername password: aPassword [
 	| pwHash cookieUsername cookiePassword |
-	cookieUsername _ self cookies at: #ComancheUsername ifAbsent: [^false].
+	cookieUsername := self cookies at: #ComancheUsername ifAbsent: [^false].
 	cookieUsername = aUsername ifFalse: [^false].
 
-	cookiePassword _ self cookies at: #ComanchePassword ifAbsent: [^false].
-	pwHash _ self hashPassword: aPassword.
+	cookiePassword := self cookies at: #ComanchePassword ifAbsent: [^false].
+	pwHash := self hashPassword: aPassword.
 	^cookiePassword = pwHash asString
 ]
 
@@ -484,8 +490,8 @@ HttpRequest >> multipartBoundary [
 	^self propertyAt: #multipartBoundary ifAbsentPut:
 		[(self contentType beginsWith: MIMEDocument contentTypeMultipart)
 			ifTrue: ["contentType gets lowercased, so access the raw header"
-				str _ header at: 'content-type' ifAbsent: [ '' ].
-				idx _ str indexOf: $=.
+				str := header at: 'content-type' ifAbsent: [ '' ].
+				idx := str indexOf: $=.
 				'--', (str copyFrom: idx + 1 to: str size)]
 			ifFalse: [ nil ]]
 ]
@@ -531,9 +537,9 @@ HttpRequest >> nextChunkHeader [
 	"Read the next multipart data chunk's header"
 
 	| string dict mChunk |
-	string _ stream upToAll: self endOfRequestHeaderMarker.
-	dict _ self class parseHttpHeader: string.
-	mChunk _ MultipartChunk from: dict.
+	string := stream upToAll: self endOfRequestHeaderMarker.
+	dict := self class parseHttpHeader: string.
+	mChunk := MultipartChunk from: dict.
 	mChunk stream: self stream.
 	mChunk multipartBoundary: self multipartBoundary.
 	^mChunk
@@ -678,7 +684,7 @@ HttpRequest >> rawUrl [
 { #category : #'initialize-release' }
 HttpRequest >> readRequestHeaderFrom: aStream [
 	| reqHeader |
-	reqHeader _ ReadStream on: 
+	reqHeader := ReadStream on: 
 		(aStream upToAll: self endOfRequestHeaderMarker).
 	self initStatusString: (self readStatusStringFrom: reqHeader).
 	self header: (self class parseHttpHeader: reqHeader upToEnd).
@@ -692,9 +698,9 @@ HttpRequest >> readStatusStringFrom: aStream [
 	a Request-Line is expected', so we ignore any leading CR/LF's"
 	
 	| status |
-	status _ ''.
+	status := ''.
 	[status isEmpty and: [aStream atEnd not]]
-		whileTrue: [status _ aStream upToAll: String crlf].
+		whileTrue: [status := aStream upToAll: String crlf].
 		
 	^ status
 ]
@@ -749,7 +755,7 @@ HttpRequest >> session [
 HttpRequest >> setCookieName: nameString value: valueString expiresDate: expiresDate expiresTime: expiresTime path: pathString domain: domainString secure: secureBoolean [ 
 	"set a cookie in the Response"
 	| temp |
-	temp _ String new writeStream.
+	temp := String new writeStream.
 	"NAME=VALUE"
 	temp nextPutAll: nameString;
 		 nextPut: $=;
@@ -814,7 +820,7 @@ HttpRequest >> setUsername: aUsername password: aPassword [
 	"save the username/password in cookies"
 	| pwHash |
 	self setUsername: aUsername.
-	pwHash _ self hashPassword: aPassword.
+	pwHash := self hashPassword: aPassword.
 	self
 		setCookieName: #ComanchePassword
 		value: pwHash asString
@@ -852,7 +858,7 @@ HttpRequest >> url [
 
 { #category : #accessing }
 HttpRequest >> url: aUrl [
-	url _ aUrl
+	url := aUrl
 ]
 
 { #category : #accessing }

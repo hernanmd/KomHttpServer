@@ -70,7 +70,7 @@ ModDir class >> serverDirectory: aFileDirectory [
 { #category : #'as yet unclassified' }
 ModDir >> directoryIndex [
 
-	^directoryIndex ifNil: [directoryIndex _ OrderedCollection new]
+	^directoryIndex ifNil: [directoryIndex := OrderedCollection new]
 ]
 
 { #category : #'as yet unclassified' }
@@ -123,7 +123,7 @@ ModDir >> processHttp [
 ModDir >> redirectWithTrailingSlash: request [
 
 	| location |
-	location _ request url, '/'.
+	location := request url, '/'.
 	HttpResponse current: 
 		((HttpResponse
 			status: #tempMoved
