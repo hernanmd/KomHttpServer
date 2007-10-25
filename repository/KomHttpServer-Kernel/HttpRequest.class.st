@@ -668,12 +668,16 @@ HttpRequest >> rawPostFields [
 	"reasons: 1) lazy form processing;
 		2) allow the app to specify whether it wants multiple values for fields"
 
-	^self 
-		propertyAt: #rawPostFields 
-		ifAbsentPut: 
-			[(self isPostRequest) 
-				ifTrue: [stream next: self contentLength]
-				ifFalse: ['']]
+	^self propertyAt: #rawPostFields ifAbsentPut: [
+
+		(self isPostRequest and: [ 
+			self contentType = MIMEDocument contentTypeFormData 
+		]) ifTrue: [
+			stream next: self contentLength
+		] ifFalse: [
+			''
+		].
+	]
 ]
 
 { #category : #accessing }
