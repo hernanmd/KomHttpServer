@@ -199,10 +199,7 @@ TcpListener >> pvtNewListener: backlogSize [
 	| listener |
 	listener := self socketClass newTCP.
 	self socketsToDestroy add: listener.
-	listener
-		listenOn: portNumber
-		backlogSize: backlogSize
-		interface: #(127 0 0 1) asByteArray.
+	listener listenOn: portNumber backlogSize: backlogSize.
 	^listener
 ]
 
