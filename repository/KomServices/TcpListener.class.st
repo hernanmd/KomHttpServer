@@ -24,7 +24,7 @@ In the following example, a TcpListener is established on port 8123.  After eval
 			socket closeAndDestroy].
 	listener forkAndListenWhile: [count < 5].
 
-For an additional example of using TcpListener, see HttpService.
+For an additional example of using TcpListener, see TcpService.
 
 "
 Class {

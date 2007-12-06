@@ -1,5 +1,5 @@
 "
-I am a comanche service that listens for inbound TCP connectinos on a given port.
+I am a KomHttpServer service that listens for inbound TCP connections on a given port.
 
 Instance Variables:
 
