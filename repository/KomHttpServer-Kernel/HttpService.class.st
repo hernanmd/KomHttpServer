@@ -58,18 +58,20 @@ HttpService class >> initialize [
 HttpService class >> initializeServerType [
 	"self initializeServerType"
 
-	ServerType := String streamContents:
-		[ :s |
-		s nextPutAll: 'Comanche/'.
-		s nextPutAll: self version.
-		s nextPutAll: ' ('.
-		s nextPutAll: self platform.
-		s nextPutAll: ') '.
-		ComancheModule withAllSubclassesDo: 
-			[ :modClass |
-			modClass version isEmpty ifFalse:
-				[s nextPutAll: modClass version.
-				s nextPut: $ ]]].
+	ServerType := String streamContents: 
+					[:s | 
+					s nextPutAll: self serviceName.
+					s nextPutAll: '/'.
+					s nextPutAll: self version.
+					s nextPutAll: ' ('.
+					s nextPutAll: self platform.
+					s nextPutAll: ') '.
+					ComancheModule withAllSubclassesDo: 
+							[:modClass | 
+							modClass version isEmpty 
+								ifFalse: 
+									[s nextPutAll: modClass version.
+									s nextPut: $ ]]]
 ]
 
 { #category : #accessing }
@@ -85,9 +87,14 @@ HttpService class >> serverType [
 ]
 
 { #category : #accessing }
+HttpService class >> serviceName [
+	^ 'KomHttpServer'
+]
+
+{ #category : #accessing }
 HttpService class >> version [
 
-	^'6.2'
+	^'7.0'
 ]
 
 { #category : #'error handling' }

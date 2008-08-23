@@ -578,7 +578,6 @@ HttpResponse >> writeHeadersOn: aStream [
 
 { #category : #responding }
 HttpResponse >> writeOn: aStream [
-
 	self writeHeadersOn: aStream.
 	self pvtWriteContentsOn: aStream.
 
