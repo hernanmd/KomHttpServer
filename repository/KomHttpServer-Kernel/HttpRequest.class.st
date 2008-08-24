@@ -492,7 +492,6 @@ HttpRequest >> multipartBoundary [
 	| str idx boundary |
 	"boundary specification in the HTTP header looks like:
 	Content-Type: multipart/form-data; boundary=BOUNDARY "
-	self halt.
 	boundary := 'boundary='.
 	^self propertyAt: #multipartBoundary ifAbsentPut:
 		[(self contentType beginsWith: MIMEDocument contentTypeMultipart)
