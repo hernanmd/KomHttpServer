@@ -489,16 +489,17 @@ HttpRequest >> multiValueFormFieldsEnable [
 
 { #category : #'multipart forms' }
 HttpRequest >> multipartBoundary [
-	| str idx |
+	| str idx boundary |
 	"boundary specification in the HTTP header looks like:
 	Content-Type: multipart/form-data; boundary=BOUNDARY "
-
+	self halt.
+	boundary := 'boundary='.
 	^self propertyAt: #multipartBoundary ifAbsentPut:
 		[(self contentType beginsWith: MIMEDocument contentTypeMultipart)
 			ifTrue: ["contentType gets lowercased, so access the raw header"
 				str := header at: 'content-type' ifAbsent: [ '' ].
-				idx := str indexOf: $=.
-				'--', (str copyFrom: idx + 1 to: str size)]
+				idx := str indexOfSubCollection: boundary.
+				'--', (str copyFrom: idx + boundary size to: str size)]
 			ifFalse: [ nil ]]
 ]
 
