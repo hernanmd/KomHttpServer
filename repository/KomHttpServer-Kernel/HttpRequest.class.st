@@ -330,11 +330,6 @@ HttpRequest >> host [
 ]
 
 { #category : #'initialize-release' }
-HttpRequest >> initRemoteAddress [
-	self remoteAddress: stream socket remoteAddress
-]
-
-{ #category : #'initialize-release' }
 HttpRequest >> initStatusString: aString [ 
 	| statusLine |
 	statusLine := aString findTokens: ' '.
@@ -358,7 +353,6 @@ HttpRequest >> initialize [
 { #category : #'initialize-release' }
 HttpRequest >> initializeFromStream: aStream [
 	stream := aStream.
-	self initRemoteAddress.
 	self timestamp: Time totalSeconds.
 	self readRequestHeaderFrom: stream.
 ]
@@ -730,7 +724,12 @@ HttpRequest >> referer [
 
 { #category : #accessing }
 HttpRequest >> remoteAddress [
-	^self propertyAt: #remoteAddress ifAbsent: [nil]
+	^self
+		propertyAt: #remoteAddress
+		ifAbsentPut:
+			[[stream socket remoteAddress]
+				on: MessageNotUnderstood
+				do: [:exc | nil]]
 ]
 
 { #category : #accessing }
