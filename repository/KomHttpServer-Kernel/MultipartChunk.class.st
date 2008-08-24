@@ -95,26 +95,94 @@ MultipartChunk >> multipartBoundary: aString [
 ]
 
 { #category : #accessing }
-MultipartChunk >> saveToStream: outStream [ 
-	"This method is really dumb, it reads the entire body of the 
-	chunk before writing it onto outStream.  In the future, this will
-	change to a better streaming mechanism to allow very large amounts
-	of data to be read without requiring everything to fit into memory."
+MultipartChunk >> saveToAsyncFile: asyncFile [
+	"This method is no longer dumb. It streams data chunk wise so it doesn't have to fit
+	into memory all at once. Answers the number of bytes written to the stream.
+	The logic for stripping 128 bytes from IE4/Mac is what makes it look complex."
 
-	| body origFileName boundary |
+	| boundary size firstBuffer origFileName sz time |
 	self setSavedFlag.
+time := (Time millisecondsToRun: [
 	origFileName := self fileName.
-	boundary := String crlf , self multipartBoundary.
-	body := self stream upToAll: boundary.
+	boundary := String crlf, self multipartBoundary.
+	size := 0.
+	firstBuffer := ''.
 
-	"IE4 for Mac appends 128 bytes of Mac file system info - must remove"
-	body size >= 128 
-		ifTrue: 
-			[(body first asciiValue = 0 and: 
-					[body second asciiValue = origFileName size 
-						and: [(body copyFrom: 3 to: origFileName size + 2) = origFileName]]) 
-				ifTrue: [body := body copyFrom: 129 to: body size]].
-	outStream nextPutAll: body
+	self stream 
+		upToAll: boundary
+		bufferSize: 1000000 inBufferDo: [:buffer :start :stop |
+			firstBuffer
+				ifNil: [
+					sz := stop - start + 1.
+					asyncFile primWriteStart: asyncFile fileHandle
+						fPosition: size fromBuffer: buffer at: start count: sz.
+					size := size + sz]
+				ifNotNil: [
+					"IE4 for Mac appends 128 bytes of Mac file system info - must remove"
+					firstBuffer := firstBuffer, (buffer copyFrom: start to: stop).
+					firstBuffer size >= 128 ifTrue: [
+						(firstBuffer first asciiValue = 0 and: 
+							[firstBuffer second asciiValue = origFileName size 
+								and: [(firstBuffer copyFrom: 3 to: origFileName size + 2) = origFileName]]) 
+							ifTrue: [
+								firstBuffer := firstBuffer copyFrom: 129 to: firstBuffer size].
+						size := size + firstBuffer size.
+						asyncFile primWriteStart: asyncFile fileHandle
+							fPosition: 0 fromBuffer: firstBuffer at: 1 count: firstBuffer size.
+						firstBuffer := nil]]].
+
+	firstBuffer ifNotNil: [
+		size := size + firstBuffer size.
+		asyncFile primWriteStart: asyncFile fileHandle
+				fPosition: 0 fromBuffer: firstBuffer at: 1 count: firstBuffer size].
+]) / 1000.0.
+	time > 0 ifTrue: [
+	Transcript show: 'Time: ', time asString, ' Size: ', size asString, ' MB/s: ', ((size / (1024*1024)) /time) asString;cr ].
+	^ size
+]
+
+{ #category : #accessing }
+MultipartChunk >> saveToStream: outStream [
+	"This method is no longer dumb. It streams data chunk wise so it doesn't have to fit
+	into memory all at once. Answers the number of bytes written to the stream.
+	The logic for stripping 128 bytes from IE4/Mac is what makes it look complex."
+
+	| boundary size firstBuffer origFileName sz time |
+	self setSavedFlag.
+time := (Time millisecondsToRun: [
+	origFileName := self fileName.
+	boundary := String crlf, self multipartBoundary.
+	size := 0.
+	firstBuffer := ''.
+
+	self stream 
+		upToAll: boundary
+		bufferSize: 1000000 inBufferDo: [:buffer :start :stop |
+			firstBuffer
+				ifNil: [
+					sz := stop - start + 1.
+					size := size + sz.
+					outStream next: sz putAll: buffer startingAt: start]
+				ifNotNil: [
+					"IE4 for Mac appends 128 bytes of Mac file system info - must remove"
+					firstBuffer := firstBuffer, (buffer copyFrom: start to: stop).
+					firstBuffer size >= 128 ifTrue: [
+						(firstBuffer first asciiValue = 0 and: 
+							[firstBuffer second asciiValue = origFileName size 
+								and: [(firstBuffer copyFrom: 3 to: origFileName size + 2) = origFileName]]) 
+							ifTrue: [
+								firstBuffer := firstBuffer copyFrom: 129 to: firstBuffer size].
+						size := size + firstBuffer size.
+						outStream nextPutAll: firstBuffer.
+						firstBuffer := nil]]].
+
+	firstBuffer ifNotNil: [
+		size := size + firstBuffer size.
+		outStream nextPutAll: firstBuffer].
+]) / 1000.0.
+	time > 0 ifTrue: [
+	Transcript show: 'Time: ', time asString, ' Size: ', size asString, ' MB/s: ', ((size / (1024*1024)) /time) asString; cr].
+	^ size
 ]
 
 { #category : #accessing }
