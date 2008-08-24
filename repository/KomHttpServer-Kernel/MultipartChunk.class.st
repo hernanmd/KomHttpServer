@@ -95,26 +95,43 @@ MultipartChunk >> multipartBoundary: aString [
 ]
 
 { #category : #accessing }
-MultipartChunk >> saveToStream: outStream [ 
-	"This method is really dumb, it reads the entire body of the 
-	chunk before writing it onto outStream.  In the future, this will
-	change to a better streaming mechanism to allow very large amounts
-	of data to be read without requiring everything to fit into memory."
+MultipartChunk >> saveToStream: outStream [
+	"This method is no longer dumb. It streams data chunk wise so it doesn't have to fit
+	into memory all at once. Answers the number of bytes written to the stream.
+	The logic for stripping 128 bytes from IE4/Mac is what makes it look complex."
 
-	| body origFileName boundary |
+	| boundary size firstBuffer origFileName |
 	self setSavedFlag.
 	origFileName := self fileName.
-	boundary := String crlf , self multipartBoundary.
-	body := self stream upToAll: boundary.
+	boundary := String crlf, self multipartBoundary.
+	size := 0.
+	firstBuffer := ''.
+	
+	self stream 
+		upToAll: boundary
+		bufferSize: 1000000 do: [:buffer |
+			firstBuffer
+				ifNil: [
+					size := size + buffer size.
+					outStream nextPutAll: buffer]
+				ifNotNil: [
+					"IE4 for Mac appends 128 bytes of Mac file system info - must remove"
+					firstBuffer := firstBuffer, buffer.
+					firstBuffer size >= 128 ifTrue: [
+						(firstBuffer first asciiValue = 0 and: 
+							[firstBuffer second asciiValue = origFileName size 
+								and: [(firstBuffer copyFrom: 3 to: origFileName size + 2) = origFileName]]) 
+							ifTrue: [
+								firstBuffer := firstBuffer copyFrom: 129 to: firstBuffer size].
+						size := size + firstBuffer size.
+						outStream nextPutAll: firstBuffer.
+						firstBuffer := nil]]].
 
-	"IE4 for Mac appends 128 bytes of Mac file system info - must remove"
-	body size >= 128 
-		ifTrue: 
-			[(body first asciiValue = 0 and: 
-					[body second asciiValue = origFileName size 
-						and: [(body copyFrom: 3 to: origFileName size + 2) = origFileName]]) 
-				ifTrue: [body := body copyFrom: 129 to: body size]].
-	outStream nextPutAll: body
+	firstBuffer ifNotNil: [
+		size := size + firstBuffer size.
+		outStream nextPutAll: firstBuffer].
+	
+	^ size
 ]
 
 { #category : #accessing }
