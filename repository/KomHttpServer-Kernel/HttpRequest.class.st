@@ -330,6 +330,11 @@ HttpRequest >> host [
 ]
 
 { #category : #'initialize-release' }
+HttpRequest >> initRemoteAddress [
+	self remoteAddress: stream socket remoteAddress
+]
+
+{ #category : #'initialize-release' }
 HttpRequest >> initStatusString: aString [ 
 	| statusLine |
 	statusLine := aString findTokens: ' '.
@@ -353,6 +358,7 @@ HttpRequest >> initialize [
 { #category : #'initialize-release' }
 HttpRequest >> initializeFromStream: aStream [
 	stream := aStream.
+	self initRemoteAddress.
 	self timestamp: Time totalSeconds.
 	self readRequestHeaderFrom: stream.
 ]
@@ -489,16 +495,16 @@ HttpRequest >> multiValueFormFieldsEnable [
 
 { #category : #'multipart forms' }
 HttpRequest >> multipartBoundary [
-	| str idx boundary |
+	| str idx |
 	"boundary specification in the HTTP header looks like:
 	Content-Type: multipart/form-data; boundary=BOUNDARY "
-	boundary := 'boundary='.
+
 	^self propertyAt: #multipartBoundary ifAbsentPut:
 		[(self contentType beginsWith: MIMEDocument contentTypeMultipart)
 			ifTrue: ["contentType gets lowercased, so access the raw header"
 				str := header at: 'content-type' ifAbsent: [ '' ].
-				idx := str indexOfSubCollection: boundary.
-				'--', (str copyFrom: idx + boundary size to: str size)]
+				idx := str indexOf: $=.
+				'--', (str copyFrom: idx + 1 to: str size)]
 			ifFalse: [ nil ]]
 ]
 
@@ -724,12 +730,7 @@ HttpRequest >> referer [
 
 { #category : #accessing }
 HttpRequest >> remoteAddress [
-	^self
-		propertyAt: #remoteAddress
-		ifAbsentPut:
-			[[stream socket remoteAddress]
-				on: MessageNotUnderstood
-				do: [:exc | nil]]
+	^self propertyAt: #remoteAddress ifAbsent: [nil]
 ]
 
 { #category : #accessing }

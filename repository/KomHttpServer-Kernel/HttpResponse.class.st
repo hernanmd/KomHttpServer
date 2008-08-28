@@ -165,6 +165,7 @@ HttpResponse class >> initializeStatusCodes [
 		at: #notModified			put: ('304' -> 'Not Modified');
 		at: #useProxy				put: ('305' -> 'Use Proxy');
 		at: #temporaryRedirect	put: ('307' -> 'Temporary Redirect');
+		at: #tempMoved			put: ('307' -> 'Temporary Redirect'); "kept for compatibility"
 		"4xx: Client-Side Error status code"
 		at: #badRequest				put: ('400' -> 'Bad Request');
 		at: #unauthorized				put: ('401' -> 'Unauthorized');
@@ -220,7 +221,7 @@ HttpResponse class >> redirectTo: url [
 	"Create a redirection response."
 
 	^(HttpResponse
-			status: #tempMoved
+			status: #seeOther
 			contents: 'Temporarily moved to: <A HREF="', url, '">', url, '</A>')
 		fieldAt: 'Location' put: url;
 		fieldAt: 'URI' put: url; yourself
@@ -578,6 +579,7 @@ HttpResponse >> writeHeadersOn: aStream [
 
 { #category : #responding }
 HttpResponse >> writeOn: aStream [
+
 	self writeHeadersOn: aStream.
 	self pvtWriteContentsOn: aStream.
 
