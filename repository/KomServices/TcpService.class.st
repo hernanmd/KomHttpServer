@@ -14,7 +14,8 @@ Class {
 	#name : #TcpService,
 	#superclass : #ApplicationService,
 	#instVars : [
-		'portNumber'
+		'portNumber',
+		'address'
 	],
 	#classVars : [
 		'PortAssignments'
@@ -119,6 +120,15 @@ TcpService >> assignPort [
 ]
 
 { #category : #initialization }
+TcpService >> initializeOnPort: portNum address: anAddress priority: priorityLevel [
+
+	portNumber := portNum.
+	address := anAddress.
+	priority := priorityLevel.
+
+]
+
+{ #category : #initialization }
 TcpService >> initializeOnPort: portNum priority: priorityLevel [
 
 	portNumber := portNum.
@@ -159,11 +169,14 @@ TcpService >> printOn: aStream [
 ]
 
 { #category : #running }
-TcpService >> runWhile: aBlock [
-
-	[(TcpListener on: self portNumber handler: self)
-		listenWhile: aBlock] ensure: [self unassignPort]
-
+TcpService >> runWhile: aBlock [ 
+	| listener |
+	[listener := TcpListener 
+		on: self portNumber
+		address: self address
+		handler: self.
+	listener listenWhile: aBlock ]
+		ensure: [ self unassignPort ]
 ]
 
 { #category : #conversation }

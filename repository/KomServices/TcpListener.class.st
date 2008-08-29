@@ -33,7 +33,8 @@ Class {
 	#instVars : [
 		'portNumber',
 		'handler',
-		'socketsToDestroy'
+		'socketsToDestroy',
+		'address'
 	],
 	#category : #KomServices
 }
@@ -75,6 +76,14 @@ TcpListener class >> listenerDestroyDelay: milliseconds [
 ]
 
 { #category : #'instance creation' }
+TcpListener class >> on: aPort address: anAddress handler: aBlock [
+
+	^self new initializeOnPort: aPort address: anAddress handler: aBlock 
+
+
+]
+
+{ #category : #'instance creation' }
 TcpListener class >> on: portNumber handler: aValuable [
 
 	^self new
@@ -89,9 +98,33 @@ TcpListener >> acceptTimeout [
 ]
 
 { #category : #accessing }
+TcpListener >> address [
+	^ address
+]
+
+{ #category : #accessing }
+TcpListener >> address: aStringOrCollection [
+	address := aStringOrCollection asIpByteArray
+]
+
+{ #category : #accessing }
 TcpListener >> backlogSize [
 
 	^self class backlogSize
+]
+
+{ #category : #private }
+TcpListener >> bind: listener withBacklogSize: backlogSize [ 
+	address 
+		ifNil: 
+			[ listener 
+				listenOn: portNumber
+				backlogSize: backlogSize ]
+		ifNotNil: 
+			[ listener 
+				listenOn: portNumber
+				backlogSize: backlogSize
+				interface: address ]
 ]
 
 { #category : #'initialize-release' }
@@ -109,11 +142,23 @@ TcpListener >> forkAndListenWhile: aBlock [
 ]
 
 { #category : #'initialize-release' }
-TcpListener >> initializeOnPort: aNumber handler: aValuableObject [
-
-	portNumber := aNumber.
-	handler := aValuableObject.
+TcpListener >> initialize [
 	socketsToDestroy := OrderedCollection new
+]
+
+{ #category : #initialization }
+TcpListener >> initializeOnPort: aPort address: anAddress handler: aValuableObject [ 
+	self 
+		initializeOnPort: aPort
+		handler: aValuableObject.
+	address := anAddress
+]
+
+{ #category : #'initialize-release' }
+TcpListener >> initializeOnPort: aNumber handler: aValuableObject [ 
+	portNumber := aNumber.
+	handler := aValuableObject
+
 ]
 
 { #category : #private }
@@ -192,15 +237,16 @@ TcpListener >> pvtListenLoop: aBlock [
 ]
 
 { #category : #private }
-TcpListener >> pvtNewListener: backlogSize [
+TcpListener >> pvtNewListener: backlogSize [ 
 	"Create a new socket that listens on our port.  The backlog is how many simultaneous 
 	connections to accept at the same time"
-
 	| listener |
 	listener := self socketClass newTCP.
 	self socketsToDestroy add: listener.
-	listener listenOn: portNumber backlogSize: backlogSize.
-	^listener
+	self 
+		bind: listener
+		withBacklogSize: backlogSize.
+	^ listener
 ]
 
 { #category : #private }
@@ -216,7 +262,7 @@ TcpListener >> pvtOldListenLoop: aBlock [
 			ifNil: [Process terminationOkDuring: [(Delay forMilliseconds: 100) wait]]
 			ifNotNil:
 				[socket isUnconnected ifTrue: 
-					[socket listenOn: portNumber.
+					[self bind: socket withBacklogSize: self backlogSize.
 					self socketsToDestroy add: socket].
 				Process terminationOkDuring: 
 					[[socket waitForConnectionUntil: (Socket deadlineSecs: 10)]
