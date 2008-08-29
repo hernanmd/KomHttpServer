@@ -32,40 +32,8 @@ TcpService class >> initialize [
 
 { #category : #'instance creation' }
 TcpService class >> on: portNumber [
-
-	^self 
-		on: portNumber
-		priority: self defaultPriority 
-
-]
-
-{ #category : #'instance creation' }
-TcpService class >> on: portNumber named: aString [
-
-	^self 
-		on: portNumber
-		named: aString
-		priority: self defaultPriority 
-
-]
-
-{ #category : #'instance creation' }
-TcpService class >> on: portNumber named: aString priority: priorityNum [
-
-	^self new
-		name: aString;
-		portNumber: portNumber;
-		priority: priorityNum;
-		yourself
-
-]
-
-{ #category : #'instance creation' }
-TcpService class >> on: portNumber priority: priorityNum [
-
 	^self new
 		portNumber: portNumber;
-		priority: priorityNum;
 		yourself
 
 ]
@@ -100,15 +68,32 @@ TcpService class >> startOn: portNumber [
 { #category : #'instance creation' }
 TcpService class >> startOn: portNumber named: aString [
 
-	^(self on: portNumber named: aString) start; yourself
+	^(self on: portNumber)
+		name: aString;
+		start;
+		yourself
 
 ]
 
 { #category : #'instance creation' }
 TcpService class >> startOn: portNumber named: aString priority: aPriority [
 
-	^(self on: portNumber named: aString priority: aPriority) start; yourself
+	^(self on: portNumber)
+		name: aString;
+		priority: aPriority;
+		start;
+		yourself
 
+]
+
+{ #category : #accessing }
+TcpService >> address [
+	^ address
+]
+
+{ #category : #accessing }
+TcpService >> address: anObject [
+	address := anObject
 ]
 
 { #category : #running }
