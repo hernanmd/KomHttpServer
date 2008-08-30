@@ -151,7 +151,7 @@ TcpListener >> initializeOnPort: aPort address: anAddress handler: aValuableObje
 	self 
 		initializeOnPort: aPort
 		handler: aValuableObject.
-	address := anAddress
+	self address: anAddress
 ]
 
 { #category : #'initialize-release' }
