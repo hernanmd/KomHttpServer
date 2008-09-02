@@ -38,6 +38,14 @@ TcpService class >> on: portNumber [
 
 ]
 
+{ #category : #'instance creation' }
+TcpService class >> on: portNumber named: processName [
+	^(self on: portNumber)
+		name: processName;
+		yourself
+
+]
+
 { #category : #accessing }
 TcpService class >> serviceOnPort: portNumber [
 	^ self serviceOnPort: portNumber
@@ -68,19 +76,8 @@ TcpService class >> startOn: portNumber [
 { #category : #'instance creation' }
 TcpService class >> startOn: portNumber named: aString [
 
-	^(self on: portNumber)
-		name: aString;
-		start;
-		yourself
-
-]
-
-{ #category : #'instance creation' }
-TcpService class >> startOn: portNumber named: aString priority: aPriority [
-
-	^(self on: portNumber)
-		name: aString;
-		priority: aPriority;
+	^(self on: portNumber
+		named: aString)
 		start;
 		yourself
 
