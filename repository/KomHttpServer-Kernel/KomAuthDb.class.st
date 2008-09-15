@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'passwords'
 	],
-	#category : #'KomHttpServer-Modules'
+	#category : 'KomHttpServer-Modules'
 }
 
 { #category : #'instance creation' }

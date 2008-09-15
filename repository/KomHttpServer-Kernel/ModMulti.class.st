@@ -31,7 +31,7 @@ In the following example, a ModuleAssembly instantiated with #new will have a Mo
 Class {
 	#name : #ModMulti,
 	#superclass : #ComancheModule,
-	#category : #'KomHttpServer-Modules'
+	#category : 'KomHttpServer-Modules'
 }
 
 { #category : #processing }

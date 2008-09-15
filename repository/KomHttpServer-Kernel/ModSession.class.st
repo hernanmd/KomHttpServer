@@ -42,7 +42,7 @@ Class {
 		'lastCleanup',
 		'secondsToLive'
 	],
-	#category : #'KomHttpServer-Modules'
+	#category : 'KomHttpServer-Modules'
 }
 
 { #category : #private }

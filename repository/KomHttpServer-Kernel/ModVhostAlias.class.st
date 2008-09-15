@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'host'
 	],
-	#category : #'KomHttpServer-Modules'
+	#category : 'KomHttpServer-Modules'
 }
 
 { #category : #accessing }

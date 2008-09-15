@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'subModules'
 	],
-	#category : #'KomHttpServer-Modules'
+	#category : 'KomHttpServer-Modules'
 }
 
 { #category : #'as yet unclassified' }

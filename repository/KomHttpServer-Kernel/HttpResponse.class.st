@@ -24,7 +24,7 @@ Class {
 		'StatusSymbols',
 		'StatusCodes'
 	],
-	#category : #'KomHttpServer-Protocol'
+	#category : 'KomHttpServer-Protocol'
 }
 
 { #category : #bindings }

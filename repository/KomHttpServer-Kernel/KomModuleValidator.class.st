@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'problems'
 	],
-	#category : #'KomHttpServer-Modules'
+	#category : 'KomHttpServer-Modules'
 }
 
 { #category : #'as yet unclassified' }

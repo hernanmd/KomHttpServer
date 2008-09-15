@@ -43,7 +43,7 @@ Class {
 	#instVars : [
 		'logger'
 	],
-	#category : #'KomHttpServer-Modules'
+	#category : 'KomHttpServer-Modules'
 }
 
 { #category : #'as yet unclassified' }

@@ -14,7 +14,7 @@ Class {
 	#instVars : [
 		'moduleStack'
 	],
-	#category : #'KomHttpServer-Modules'
+	#category : 'KomHttpServer-Modules'
 }
 
 { #category : #'as yet unclassified' }

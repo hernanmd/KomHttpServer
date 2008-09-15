@@ -4,7 +4,7 @@ Used for determining the document root for mass virtual hosting (where the virtu
 Class {
 	#name : #ModVhostDoc,
 	#superclass : #ModDoc,
-	#category : #'KomHttpServer-Modules'
+	#category : 'KomHttpServer-Modules'
 }
 
 { #category : #'as yet unclassified' }

@@ -16,7 +16,7 @@ Class {
 	#classVars : [
 		'LastSessionID'
 	],
-	#category : #'KomHttpServer-Modules'
+	#category : 'KomHttpServer-Modules'
 }
 
 { #category : #bindings }

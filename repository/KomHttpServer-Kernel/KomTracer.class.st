@@ -10,7 +10,7 @@ I am a KomLogger, but instead of writing a log file format, I write out a detail
 Class {
 	#name : #KomTracer,
 	#superclass : #KomLogger,
-	#category : #'KomHttpServer-Modules'
+	#category : 'KomHttpServer-Modules'
 }
 
 { #category : #'as yet unclassified' }

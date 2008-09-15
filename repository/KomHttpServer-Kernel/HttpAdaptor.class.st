@@ -32,7 +32,7 @@ Class {
 		'TimezoneOffset',
 		'LastTimeStamp'
 	],
-	#category : #'KomHttpServer-Protocol'
+	#category : 'KomHttpServer-Protocol'
 }
 
 { #category : #timestamp }
