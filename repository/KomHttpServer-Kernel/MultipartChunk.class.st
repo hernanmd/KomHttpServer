@@ -19,7 +19,7 @@ Class {
 		'multipartBoundary',
 		'stream'
 	],
-	#category : 'KomHttpServer-Protocol'
+	#category : #'KomHttpServer-Protocol'
 }
 
 { #category : #'instance creation' }

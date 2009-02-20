@@ -32,7 +32,7 @@ Class {
 		'TimezoneOffset',
 		'LastTimeStamp'
 	],
-	#category : 'KomHttpServer-Protocol'
+	#category : #'KomHttpServer-Protocol'
 }
 
 { #category : #timestamp }
@@ -191,20 +191,19 @@ HttpAdaptor >> beginConversation [
 	count := 0.
 	continue := true.
 	limit := self maxKeepAliveRequests.
-	[
+	[[
 		[request := self readRequest] on: Error do: [ :ex | continue := false].
 		continue ifTrue:		
-			[[Bindings clamp:
+			[Bindings clamp:
 				[response := self dispatchRequest: request.
 				self addConnectionHeaders: response request: request count: count.
-				(self writeResponse: response for: request) ifFalse: [^self destroy].
+				(self writeResponse: response for: request) ifFalse: [^self].
 				self doPostProcessingFor: request response: response].
 			count := count + 1.
-			continue := response isPersistent and: [count < limit]]
-				ifCurtailed: [continue := false]].
+			continue := response isPersistent and: [count < limit]].
 		continue.
-	] whileTrue.
-	self destroy.
+	] whileTrue]
+		ensure: [self destroy]
 ]
 
 { #category : #accessing }

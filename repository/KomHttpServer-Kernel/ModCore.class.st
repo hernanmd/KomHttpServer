@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'serverRoot'
 	],
-	#category : 'KomHttpServer-Modules'
+	#category : #'KomHttpServer-Modules'
 }
 
 { #category : #bindings }

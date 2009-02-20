@@ -32,7 +32,7 @@ By contrast, the following example will end up in our default response if no mat
 Class {
 	#name : #ModNotFound,
 	#superclass : #ComancheModule,
-	#category : 'KomHttpServer-Modules'
+	#category : #'KomHttpServer-Modules'
 }
 
 { #category : #'as yet unclassified' }

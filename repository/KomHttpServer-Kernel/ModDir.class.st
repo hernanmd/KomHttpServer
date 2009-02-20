@@ -27,7 +27,7 @@ Class {
 	#instVars : [
 		'directoryIndex'
 	],
-	#category : 'KomHttpServer-Modules'
+	#category : #'KomHttpServer-Modules'
 }
 
 { #category : #tests }

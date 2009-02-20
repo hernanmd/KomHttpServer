@@ -1,7 +1,7 @@
 Class {
 	#name : #KomModuleVisitor,
 	#superclass : #Object,
-	#category : 'KomHttpServer-Modules'
+	#category : #'KomHttpServer-Modules'
 }
 
 { #category : #'as yet unclassified' }

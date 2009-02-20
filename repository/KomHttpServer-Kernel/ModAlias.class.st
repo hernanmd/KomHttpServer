@@ -20,7 +20,7 @@ Class {
 	#instVars : [
 		'pathPrefix'
 	],
-	#category : 'KomHttpServer-Modules'
+	#category : #'KomHttpServer-Modules'
 }
 
 { #category : #'as yet unclassified' }

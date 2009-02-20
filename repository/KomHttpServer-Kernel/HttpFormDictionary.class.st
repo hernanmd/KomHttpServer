@@ -21,7 +21,7 @@ fixed #at: and #at:ifAbsent: returns a String when the value had only one item. 
 Class {
 	#name : #HttpFormDictionary,
 	#superclass : #Dictionary,
-	#category : 'KomHttpServer-Protocol'
+	#category : #'KomHttpServer-Protocol'
 }
 
 { #category : #accessing }

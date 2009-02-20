@@ -13,7 +13,7 @@ Class {
 		'name',
 		'type'
 	],
-	#category : 'KomHttpServer-Kernel'
+	#category : #'KomHttpServer-Kernel'
 }
 
 { #category : #'instance creation' }

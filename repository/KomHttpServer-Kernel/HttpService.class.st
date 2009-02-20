@@ -33,7 +33,7 @@ Class {
 		'ServerType',
 		'ServerHostName'
 	],
-	#category : 'KomHttpServer-Kernel'
+	#category : #'KomHttpServer-Kernel'
 }
 
 { #category : #bindings }

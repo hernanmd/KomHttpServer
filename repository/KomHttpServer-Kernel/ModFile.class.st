@@ -24,7 +24,7 @@ This example just starts a file server on your default directory.  Any directori
 Class {
 	#name : #ModFile,
 	#superclass : #ComancheModule,
-	#category : 'KomHttpServer-Modules'
+	#category : #'KomHttpServer-Modules'
 }
 
 { #category : #processing }

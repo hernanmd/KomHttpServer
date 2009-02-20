@@ -13,7 +13,7 @@ Class {
 	#instVars : [
 		'producerBlock'
 	],
-	#category : 'KomHttpServer-Protocol'
+	#category : #'KomHttpServer-Protocol'
 }
 
 { #category : #accessing }

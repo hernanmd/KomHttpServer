@@ -26,7 +26,7 @@ Class {
 	#classVars : [
 		'EndOfRequestHeaderMarker'
 	],
-	#category : 'KomHttpServer-Protocol'
+	#category : #'KomHttpServer-Protocol'
 }
 
 { #category : #parsing }
@@ -691,19 +691,6 @@ HttpRequest >> rawUrl [
 	^rawUrl
 ]
 
-{ #category : #accessing }
-HttpRequest >> rawXml [
-	^self propertyAt: #rawXml ifAbsentPut: [
-		(self isPostRequest and: [ 
-			self contentType = MIMEDocument contentTypeXml 
-		]) ifTrue: [
-			stream next: self contentLength
-		] ifFalse: [
-			''
-		].
-	]
-]
-
 { #category : #'initialize-release' }
 HttpRequest >> readRequestHeaderFrom: aStream [
 	| reqHeader |
@@ -712,7 +699,6 @@ HttpRequest >> readRequestHeaderFrom: aStream [
 	self initStatusString: (self readStatusStringFrom: reqHeader).
 	self header: (self class parseHttpHeader: reqHeader upToEnd).
 	self rawPostFields. "force reading/parsing post fields"
-	self rawXml."force reading/parsing posted xml"
 ]
 
 { #category : #'initialize-release' }
