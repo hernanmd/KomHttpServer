@@ -46,7 +46,7 @@ HttpResponse class >> fromFileStream: aStream [
 		status: #ok;
 		"fieldAt: 'Expires' put: 'Thu, 15 Apr 2010 20:00:00 GMT';"
 		"fieldAt: 'Cache-Control' put: 'max-age=86400';"
-		contentType: aStream mimeType;
+		contentType: aStream mimeType asString;
 		contents: aStream;
 		yourself
 
@@ -63,7 +63,7 @@ HttpResponse class >> fromMIMEDocument: aMIMEDoc [
 	^self basicNew
 		status: #ok;
 		"fieldAt: 'Cache-Control' put: 'max-age=86400';"
-		contentType: aMIMEDoc mimeType;
+		contentType: aMIMEDoc mimeType asString;
 		contents: content;
 		yourself
 
@@ -77,7 +77,7 @@ HttpResponse class >> fromStream: aStream [
 		status: #ok;
 		"fieldAt: 'Expires' put: 'Thu, 15 Apr 2010 20:00:00 GMT';"
 		"fieldAt: 'Cache-Control' put: 'max-age=86400';"
-		contentType: aStream mimeType;
+		contentType: aStream mimeType asString;
 		contents: aStream;
 		yourself
 
