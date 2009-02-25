@@ -18,13 +18,12 @@ Object >> asHttpResponseTo: anHttpRequest [
 ]
 
 { #category : #'*KomHttpServer' }
-Object >> isComancheModule [
-
-	^false
+Object >> contentType [
+	^MIMEDocument defaultContentType
 ]
 
 { #category : #'*KomHttpServer' }
-Object >> mimeType [
+Object >> isComancheModule [
 
-	^MIMEDocument defaultContentType
+	^false
 ]

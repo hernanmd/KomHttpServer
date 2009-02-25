@@ -11,9 +11,3 @@ Stream >> isTranscriptStream [
 
 	^ false
 ]
-
-{ #category : #'*KomHttpServer' }
-Stream >> mimeType [
-
-	^MIMEDocument defaultContentType
-]
