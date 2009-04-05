@@ -1,6 +1,19 @@
 Extension { #name : #BlockClosure }
 
 { #category : #'*DynamicBindings' }
+BlockClosure >> bindings [
+	"Answers the Dynamic Bindings that are currently visible in the receiver's context.  This is kind of a hack...we could do a better job of this if we used the exception handling primitives directly, however, this implementation has the benefit of being slightly more portable."
+	
+	| oldSender answer |
+	oldSender := thisContext swapSender: self.
+	answer := BindingsLocator signal.
+	thisContext swapSender: oldSender.
+	^answer 
+
+	
+]
+
+{ #category : #'*DynamicBindings' }
 BlockClosure >> forkWithBindings [
 	"Create and schedule a new process that has the same 
 	dynamic bindings as the active process"
