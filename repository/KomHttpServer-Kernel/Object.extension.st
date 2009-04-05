@@ -19,6 +19,7 @@ Object >> asHttpResponseTo: anHttpRequest [
 
 { #category : #'*KomHttpServer' }
 Object >> contentType [
+
 	^MIMEDocument defaultContentType
 ]
 
