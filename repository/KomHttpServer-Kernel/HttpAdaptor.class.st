@@ -28,9 +28,9 @@ Class {
 		'postProcessors'
 	],
 	#classVars : [
+		'LastTimeStamp',
 		'LastTimeStampTime',
-		'TimezoneOffset',
-		'LastTimeStamp'
+		'TimezoneOffset'
 	],
 	#category : #'KomHttpServer-Protocol'
 }
