@@ -18,10 +18,10 @@ BindingsLocator >> defaultAction [
 	#valueWithBindings:."
 
 	| tmp defaultActionCtx |
-	tmp _ thisContext.
-	[tmp sender notNil] whileTrue: [tmp _ tmp sender].
+	tmp := thisContext.
+	[tmp sender notNil] whileTrue: [tmp := tmp sender].
 
-	defaultActionCtx _ thisContext.
+	defaultActionCtx := thisContext.
 	[	
 		tmp swapSender: thisContext sender.
 		thisContext sender sender sender swapSender: nil.
