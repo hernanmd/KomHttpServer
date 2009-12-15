@@ -148,8 +148,8 @@ DynamicBindings >> at: key ifAbsent: aBlock [
 
 	| assoc tmp |
 	tmp := self.
-	[(assoc := tmp array at: (tmp findElementOrNil: key)) == nil] 
-		whileTrue: [(tmp := tmp parent) ifNil: [^aBlock value]].
+	[ (assoc := tmp associationAt: key ifAbsent: nil) == nil ] 
+		whileTrue: [ (tmp := tmp parent) ifNil: [ ^aBlock value ] ].
 	^assoc value
 
 ]
@@ -244,9 +244,9 @@ DynamicBindings >> parent: aDynamicBindings [
 { #category : #accessing }
 DynamicBindings >> root [
 
-	| tmp |
+	| tmp tmpParent |
 	tmp := self.
-	[tmp parent notNil] whileTrue:
-		[tmp := tmp parent].
+	[ (tmpParent := tmp parent) == nil ] whileFalse: [
+		tmp := tmpParent ].
 	^tmp
 ]
