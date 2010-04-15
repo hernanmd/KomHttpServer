@@ -129,8 +129,8 @@ TcpListener >> bind: listener withBacklogSize: backlogSize [
 
 { #category : #'initialize-release' }
 TcpListener >> destroySockets [
-	socketsToDestroy ~~ nil ifTrue: 
-		[socketsToDestroy do: [ :ea | ea destroy]].
+	socketsToDestroy notNil
+		ifTrue: [ socketsToDestroy do: [ :ea | ea destroy ] ].
 	socketsToDestroy := OrderedCollection new
 ]
 
