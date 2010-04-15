@@ -4,9 +4,6 @@ I am used to find the runtime environment of a given ContextPart.  If no suitabl
 Class {
 	#name : #BindingsLocator,
 	#superclass : #Notification,
-	#classVars : [
-		'Default'
-	],
 	#category : #DynamicBindings
 }
 

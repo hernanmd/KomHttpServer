@@ -145,13 +145,10 @@ DynamicBindings class >> root [
 
 { #category : #accessing }
 DynamicBindings >> at: key ifAbsent: aBlock [
-
 	| assoc tmp |
 	tmp := self.
-	[ (assoc := tmp associationAt: key ifAbsent: nil) == nil ] 
-		whileTrue: [ (tmp := tmp parent) ifNil: [ ^aBlock value ] ].
-	^assoc value
-
+	[ (assoc := tmp associationAt: key ifAbsent: nil) isNil ] whileTrue: [ (tmp := tmp parent) ifNil: [ ^ aBlock value ] ].
+	^ assoc value
 ]
 
 { #category : #accessing }
@@ -210,14 +207,14 @@ DynamicBindings >> isBound: anObject [
 
 { #category : #accessing }
 DynamicBindings >> level [
-
 	| tmp level |
 	tmp := self.
 	level := 0.
-	[tmp == nil] whileFalse:
-		[tmp := tmp parent.
-		level := level + 1].
-	^level
+	[ tmp isNil ]
+		whileFalse:
+			[ tmp := tmp parent.
+			level := level + 1 ].
+	^ level
 ]
 
 { #category : #isolation }
@@ -243,10 +240,8 @@ DynamicBindings >> parent: aDynamicBindings [
 
 { #category : #accessing }
 DynamicBindings >> root [
-
 	| tmp tmpParent |
 	tmp := self.
-	[ (tmpParent := tmp parent) == nil ] whileFalse: [
-		tmp := tmpParent ].
-	^tmp
+	[ (tmpParent := tmp parent) isNil ] whileFalse: [ tmp := tmpParent ].
+	^ tmp
 ]
