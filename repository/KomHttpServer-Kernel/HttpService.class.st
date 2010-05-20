@@ -94,7 +94,7 @@ HttpService class >> serviceName [
 { #category : #accessing }
 HttpService class >> version [
 
-	^'7.1a'
+	^'7.1.2'
 ]
 
 { #category : #'error handling' }

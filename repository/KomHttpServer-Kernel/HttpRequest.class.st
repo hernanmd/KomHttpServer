@@ -896,7 +896,7 @@ HttpRequest >> userObject: anObject [
 { #category : #printing }
 HttpRequest >> writeOn: aStream [
 	"this can be used to form a client-side request and send it over network"
-	aStream nextPutAll: self method, ' ', self url, ' ', self protocol, String crlf.
+	aStream nextPutAll: self method; nextPut: $ ; nextPutAll: self url; nextPut: $ ; nextPutAll: self protocol; nextPutAll: String crlf.
 	self header keysAndValuesDo: [:key :value |
 		aStream nextPutAll: key, ': ', value, String crlf].
 	aStream nextPutAll: String crlf.

@@ -86,7 +86,7 @@ ModVhost >> getOffsetAt: pos [
 	end := pos.
 	(temp at: end) == $- ifTrue: [end := end + 1].
 	[val := temp at: end.
-	((val >= $0) and: [val <= $9] and: [temp size > end])] whileTrue: [end := end + 1].
+	((val >= $0) and: [val <= $9 and: [temp size > end]])] whileTrue: [end := end + 1].
 	((val >= $0) and: [val <= $9]) ifTrue: [end := end + 1].
 	((end <= temp size) and: [(temp at: end) = $+])
 		ifTrue: [^temp copyFrom: pos to: end]

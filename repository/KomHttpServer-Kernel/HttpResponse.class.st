@@ -56,7 +56,6 @@ HttpResponse class >> fromFileStream: aStream [
 { #category : #'instance creation' }
 HttpResponse class >> fromMIMEDocument: aMIMEDoc [
 	| content |
-
 	content := aMIMEDoc content.
 	content isString ifTrue:
 		[content := ReadStream on: content].
@@ -401,7 +400,7 @@ HttpResponse >> pvtWriteContentLengthOn: aStream [
 HttpResponse >> pvtWriteContentTypeOn: aStream [
 	aStream
 		nextPutAll: 'Content-type: ';
-		nextPutAll: self contentType;
+		nextPutAll: self contentType asString;
 		nextPutAll: String crlf
 ]
 
