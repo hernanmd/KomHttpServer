@@ -586,6 +586,11 @@ HttpRequest >> pathParts [
 ]
 
 { #category : #accessing }
+HttpRequest >> postContents [
+	^ self postFields
+]
+
+{ #category : #accessing }
 HttpRequest >> postFields [
 	"Answer the multipart fields for a post request (if in fact this is a
 	POST request"
@@ -657,6 +662,12 @@ HttpRequest >> protocol: aString [
 ]
 
 { #category : #accessing }
+HttpRequest >> putContents [
+	"For compatibility with #postContents"
+	^ self rawPutContents 
+]
+
+{ #category : #accessing }
 HttpRequest >> queryString [
 
 	^self propertyAt: #queryString ifAbsent: [ nil ]
@@ -666,6 +677,12 @@ HttpRequest >> queryString [
 HttpRequest >> queryString: aString [
 
 	^self propertyAt: #queryString put: aString
+]
+
+{ #category : #accessing }
+HttpRequest >> rawPostContents [
+	^self rawPostFields
+
 ]
 
 { #category : #accessing }
@@ -684,6 +701,28 @@ HttpRequest >> rawPostFields [
 			''
 		].
 	]
+]
+
+{ #category : #accessing }
+HttpRequest >> rawPutContents [
+	"save the PUT contents as is, for future processing"
+	
+	^self propertyAt: #rawPutFields ifAbsentPut: [
+
+		self isPutRequest ifTrue: [
+			stream next: self contentLength
+		] ifFalse: [
+			''
+		].
+	]
+]
+
+{ #category : #accessing }
+HttpRequest >> rawRequestContents [
+	self isPostRequest ifTrue: [^ self rawPostContents ].
+	self isPutRequest ifTrue: [^ self rawPutContents].
+	"We should never get here"
+	^ ''
 ]
 
 { #category : #accessing }
@@ -747,6 +786,14 @@ HttpRequest >> removePropertyAt: aSymbol [
 HttpRequest >> removePropertyAt: aSymbol ifAbsent: aBlock [
 
 	^properties removeKey: aSymbol ifAbsent: aBlock
+]
+
+{ #category : #accessing }
+HttpRequest >> requestContents [
+	self isPostRequest ifTrue: [^ self postContents ].
+	self isPutRequest ifTrue: [^ self putContents].
+	"We should never get here"
+	^ ''
 ]
 
 { #category : #'response cookies' }
