@@ -29,8 +29,7 @@ Class {
 	],
 	#classVars : [
 		'LastTimeStamp',
-		'LastTimeStampTime',
-		'TimezoneOffset'
+		'LastTimeStampTime'
 	],
 	#category : #'KomHttpServer-Protocol'
 }
@@ -38,7 +37,7 @@ Class {
 { #category : #timestamp }
 HttpAdaptor class >> buildTimeStamp: seconds [
 
-	^((TimeStamp fromSeconds: seconds) minusSeconds: self timezoneOffset) printHttpFormat
+	^((TimeStamp fromSeconds: seconds) - self timezoneOffset) printHttpFormat
 ]
 
 { #category : #bindings }
@@ -138,15 +137,9 @@ HttpAdaptor class >> timeStamp [
 
 { #category : #preferences }
 HttpAdaptor class >> timezoneOffset [
-	"The offset (in seconds) of the server's timezone relative to GMT."
+	"The offset (as Duration) of the server's timezone relative to GMT."
 
-	^TimezoneOffset ifNil: [0]
-]
-
-{ #category : #preferences }
-HttpAdaptor class >> timezoneOffset: aNumber [
-
-	^TimezoneOffset := aNumber
+	^DateAndTime localOffset
 ]
 
 { #category : #processing }
