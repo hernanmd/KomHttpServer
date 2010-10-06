@@ -53,7 +53,7 @@ ModDoc class >> fullFilePath [
 	indicated by the current HttpRequest."
 
 	"Ordinarily, just use the following:"
-	(SmalltalkImage current platformName ~= 'Mac OS')
+	(SmalltalkImage os platformName ~= 'Mac OS')
 		ifTrue: [^self documentRoot fullNameFor: self relativeFilePath].
 
 	"But! Because of Mac idiosyncracies, we must do:"
