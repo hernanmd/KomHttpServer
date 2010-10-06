@@ -18,7 +18,7 @@ BlockClosure >> processHttp [
 
 	| response |
 	self numArgs = 0
-		ifTrue: [^self value].
+		ifTrue: [^self copy fixTemps value].
 	self numArgs = 1
 		ifTrue: 
 			[response := self copy fixTemps value: HttpRequest current.
@@ -34,9 +34,9 @@ BlockClosure >> processHttpRequest: request [
 	to the client."
 
 	self numArgs = 1
-		ifTrue: [^self value: request].
+		ifTrue: [^self copy fixTemps value: request].
 	self numArgs = 0
-		ifTrue: [^self value].
+		ifTrue: [^self copy fixTemps value].
 
 ]
 
