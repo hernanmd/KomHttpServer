@@ -140,8 +140,8 @@ TcpService >> portNumber: aNumber [
 
 { #category : #'startup and shutdown' }
 TcpService >> prepareForStartup [
-	"The squeak system just started up"
-	Socket initializeNetwork.
+	super prepareForStartup.
+	Socket initializeNetwork
 ]
 
 { #category : #printing }
