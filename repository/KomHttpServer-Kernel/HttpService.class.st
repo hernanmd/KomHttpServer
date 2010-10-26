@@ -77,7 +77,7 @@ HttpService class >> initializeServerType [
 { #category : #accessing }
 HttpService class >> platform [
 
-	^SmalltalkImage current platformName
+	^Smalltalk os platformName
 ]
 
 { #category : #accessing }

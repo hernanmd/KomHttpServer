@@ -35,7 +35,8 @@ HttpRequest class >> addKey: key value: value toForm: dict multipleValues: boole
 		ifTrue: [dict at: key put: value]
 		ifFalse: [(dict includesKey: key)
 			ifFalse: [dict at: key put: value]
-			ifTrue: [dict at: key modify: [:oldValue | oldValue, value]]]
+			ifTrue: [
+				dict at: key put: (dict at: key), value]]
 ]
 
 { #category : #bindings }
@@ -148,7 +149,7 @@ HttpRequest class >> parseHttpHeader: string [
 				ifTrue:
 					[dict
 						at: lastKey
-						modify: [:item | item, (string copyFrom: start to: end)]]
+						put: (dict at: lastKey), (string copyFrom: start to: end)]
 				ifFalse:
 					[colonPos := string indexOf: keyValueDelim startingAt: start.
 					(colonPos > end or: [colonPos == 0])
