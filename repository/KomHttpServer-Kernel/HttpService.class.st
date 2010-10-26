@@ -77,7 +77,7 @@ HttpService class >> initializeServerType [
 { #category : #accessing }
 HttpService class >> platform [
 
-	^Smalltalk os platformName
+	^SmalltalkImage current platformName
 ]
 
 { #category : #accessing }
@@ -294,9 +294,11 @@ HttpService >> plug: aMonadicValuable [
 
 { #category : #'startup and shutdown' }
 HttpService >> prepareForStartup [
-
+	super prepareForStartup.
 	ServerHostName := nil.
 	self class initializeServerType.
+	self isRunning
+		ifTrue: [ self kill; start ]
 ]
 
 { #category : #serving }

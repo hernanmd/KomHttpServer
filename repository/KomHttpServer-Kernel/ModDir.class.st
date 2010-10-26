@@ -40,7 +40,7 @@ ModDir class >> directoryExists: aFileDirectory [
 	FileDirectory>>exists"
 
 	"Ordinarily, just do:"
-	Smalltalk os platformName ~= 'Mac OS' ifTrue: [^aFileDirectory exists].
+	SmalltalkImage current platformName ~= 'Mac OS' ifTrue: [^aFileDirectory exists].
 
 	"But! Because of Mac idiosyncracies, do:"
 	^aFileDirectory exists and: 
