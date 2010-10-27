@@ -297,8 +297,12 @@ HttpService >> prepareForStartup [
 	super prepareForStartup.
 	ServerHostName := nil.
 	self class initializeServerType.
-	self isRunning
-		ifTrue: [ self kill; start ]
+	"this is necessary to make it start on cog images"
+	process ifNotNil: [ :p |
+		| list |
+		list := p suspendingList.
+		(list isKindOf: Semaphore)
+			ifTrue: [ list signal ] ]
 ]
 
 { #category : #serving }
