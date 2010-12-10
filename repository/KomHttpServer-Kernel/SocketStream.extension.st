@@ -21,7 +21,8 @@ SocketStream >> upToAll: aStringOrByteArray bufferSize: maxSize do: aBlock [
 				This is probably due to old data, so we ignore it.
 				No point in cleaning the dead area to avoid hits - it will still search it."
 				index := 0].
-			index = 0 ifTrue: ["Just searched and did not find it, we only consume most of inBuffer to create overlap"
+			(index = 0 and: [searchedSoFar > sz]) ifTrue: [
+				"Just searched and did not find it, we only consume most of inBuffer to create overlap"
 				aBlock value: (self nextInBuffer: (searchedSoFar - sz)) ].
 			].
 		index = 0]]
