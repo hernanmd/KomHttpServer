@@ -18,10 +18,10 @@ BlockClosure >> processHttp [
 
 	| response |
 	self numArgs = 0
-		ifTrue: [^self value].
+		ifTrue: [ ^self value ].
 	self numArgs = 1
 		ifTrue: 
-			[response := self copy fixTemps value: HttpRequest current.
+			[response := self value: HttpRequest current.
 			response ifNotNil:
 				[HttpResponse current: response.
 				^true].
