@@ -689,19 +689,14 @@ HttpRequest >> rawPostContents [
 { #category : #accessing }
 HttpRequest >> rawPostFields [
 	"save the POST form fields as is, for future processing, see #postFields"
-	"reasons: 1) lazy form processing;
+	"reasons:
+		1) lazy form processing;
 		2) allow the app to specify whether it wants multiple values for fields"
 
 	^self propertyAt: #rawPostFields ifAbsentPut: [
-
-		(self isPostRequest and: [ 
-			self contentType = MIMEDocument contentTypeFormData 
-		]) ifTrue: [
-			stream next: self contentLength
-		] ifFalse: [
-			''
-		].
-	]
+		self isPostRequest
+			ifTrue: [ stream next: self contentLength ]
+			ifFalse: [ '' ] ]
 ]
 
 { #category : #accessing }
