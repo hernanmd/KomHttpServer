@@ -689,14 +689,20 @@ HttpRequest >> rawPostContents [
 { #category : #accessing }
 HttpRequest >> rawPostFields [
 	"save the POST form fields as is, for future processing, see #postFields"
-	"reasons:
-		1) lazy form processing;
+	"reasons: 1) lazy form processing;
 		2) allow the app to specify whether it wants multiple values for fields"
 
 	^self propertyAt: #rawPostFields ifAbsentPut: [
-		self isPostRequest
-			ifTrue: [ stream next: self contentLength ]
-			ifFalse: [ '' ] ]
+
+		(self isPostRequest and: [
+			"multipart decoding does not use #rawPostFields so we must not fetch the data from the socket here"
+			self contentType ~= MIMEDocument contentTypeMultipart 
+		]) ifTrue: [
+			stream next: self contentLength
+		] ifFalse: [
+			''
+		].
+	]
 ]
 
 { #category : #accessing }
