@@ -379,6 +379,11 @@ HttpResponse >> httpVersion [
 	^'HTTP/1.1'
 ]
 
+{ #category : #testing }
+HttpResponse >> isCommitted [
+	^ false
+]
+
 { #category : #accessing }
 HttpResponse >> isPersistent [
 

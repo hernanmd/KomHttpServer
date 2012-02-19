@@ -189,11 +189,14 @@ HttpAdaptor >> beginConversation [
 		continue ifTrue:		
 			[Bindings clamp:
 				[response := self dispatchRequest: request.
-				self addConnectionHeaders: response request: request count: count.
-				(self writeResponse: response for: request) ifFalse: [^self].
-				self doPostProcessingFor: request response: response].
+				response isCommitted ifFalse:
+					[self addConnectionHeaders: response request: request count: count.
+					(self writeResponse: response for: request) ifFalse: [^self].
+					self doPostProcessingFor: request response: response]].
 			count := count + 1.
-			continue := response isPersistent and: [count < limit]].
+			continue := response isCommitted
+				ifTrue: [false]
+				ifFalse: [response isPersistent and: [count < limit]]].
 		continue.
 	] whileTrue]
 		ensure: [self destroy]

@@ -330,26 +330,19 @@ HttpRequest >> host [
 	^self propertyAt: #host ifAbsentPut: [self header at: 'host' ifAbsent: []]
 ]
 
-{ #category : #accessing }
-HttpRequest >> host: aString [
-
-	^self propertyAt: #host put: aString
-
-]
-
 { #category : #'initialize-release' }
-HttpRequest >> initStatusString: aString [
+HttpRequest >> initStatusString: aString [ 
 	| statusLine |
 	statusLine := aString findTokens: ' '.
-	(statusLine size between: 2 and: 3)
-		ifTrue: [ 
-			self method: statusLine first.
+	(statusLine size between: 2 and: 3) 
+		ifTrue: 
+			[self method: statusLine first.
 			rawUrl := statusLine second.
-			(rawUrl asLowercase beginsWith: 'http://')
-				ifTrue: [ self readAbsoluteUrl ]
-				ifFalse: [ self readRelativeUrl ].
-			self protocol: statusLine third asUppercase ]
-		ifFalse: [ ^ self error: 'invalid http status line' ]
+			url := (rawUrl copyUpTo: $?) unescapePercentsWithTextEncoding: nil.
+			url size + 1 < rawUrl size 
+				ifTrue: [self queryString: (rawUrl copyFrom: url size + 2 to: rawUrl size)].
+			self protocol: statusLine third asUppercase]
+		ifFalse: [^self error: 'invalid http status line']
 ]
 
 { #category : #'initialize-release' }
@@ -541,7 +534,7 @@ HttpRequest >> multipartFormFieldsDo: aBlock [
 HttpRequest >> networkHost [
 
 	^self propertyAt: #networkHost ifAbsentPut: 
-		[NetworkHost fromString: (self host ifNil: [''])].
+		[NetworkHost fromString: self host].
 
 
 ]
@@ -737,24 +730,6 @@ HttpRequest >> rawRequestContents [
 { #category : #accessing }
 HttpRequest >> rawUrl [
 	^rawUrl
-]
-
-{ #category : #'initialize-release' }
-HttpRequest >> readAbsoluteUrl [
-	| absUrl |
-	absUrl := Url absoluteFromText: rawUrl.
-	url := (String streamContents: [ :aStream | absUrl path asStringOn: aStream delimiter: '/' ]) copyWithFirst: $/.
-	self host: absUrl authority.
-	self queryString: absUrl query
-
-]
-
-{ #category : #'initialize-release' }
-HttpRequest >> readRelativeUrl [
-	url := (rawUrl copyUpTo: $?) unescapePercentsWithTextEncoding: nil.
-	url size + 1 < rawUrl size
-		ifTrue: [ self queryString: (rawUrl copyFrom: url size + 2 to: rawUrl size) ]
-
 ]
 
 { #category : #'initialize-release' }
