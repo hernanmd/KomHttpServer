@@ -13,6 +13,12 @@ Enhancement ideas:
 - support a flexible logging format that uses some type of template string (ala Apache's logging facility) for producing each line in the log file 
 - implement a ""multi-streamer"" that implements a writable stream interface and will copy the output to multiple output streams
 - implement a unix like tail tool that implement a writable stream interface and will ""follow"" everything that's written to it (similar to the Transcript, but designed to only show the most recent N number of lines or characters)
+
+
+(KomLogger on: Transcript)  openTranscript
+
+(KomLogger on: Transcript)  detachTranscripts ; attachTheTranscript;
+openTranscript
 "
 Class {
 	#name : #KomLogger,
@@ -50,7 +56,7 @@ KomLogger >> attachTheTranscript [
 KomLogger >> attachTranscript [
 	self detachTheTranscript.
 	^(self streams detect: [:ea | ea isTranscriptStream] ifNone: [nil]) 
-		ifNil: [self addStream: TranscriptStream new]
+		ifNil: [self addStream: ThreadSafeTranscript new]
 ]
 
 { #category : #'as yet unclassified' }
