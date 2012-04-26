@@ -158,7 +158,7 @@ HttpRequest class >> parseHttpHeader: string [
 							value := '']
 						ifFalse:
 							[key := (string copyFrom: start to: colonPos-1) translateToLowercase.
-							value := (string copyFrom: colonPos+1 to: end) withBlanksTrimmed]].
+							value := (string copyFrom: colonPos+1 to: end) trimBoth]].
 			key isEmpty
 				ifFalse: [dict at: key put: value.
 					lastKey := key.
