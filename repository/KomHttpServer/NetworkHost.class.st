@@ -50,19 +50,16 @@ NetworkHost >> domainString [
 { #category : #accessing }
 NetworkHost >> fileSystemPath [
 	| delim |
-	delim := FileDirectory pathNameDelimiter.
 
-	^String streamContents: 
-		[ :strm |
+	delim := FileSystem disk separator.
+	^ String streamContents: [ : strm |
 		self isNamedHost
-			ifTrue: [strm nextPutAll: 'hostname']
-			ifFalse: [strm nextPutAll: 'ipaddress'].
+			ifTrue: [ strm nextPutAll: 'hostname' ]
+			ifFalse: [ strm nextPutAll: 'ipaddress' ].
 		strm nextPut: delim.
 		self name reversed 
-			do:
-				[ :part | strm nextPutAll: part asString ]
-			separatedBy: 
-				[ strm nextPut: delim ]]
+			do:	[ : part | strm nextPutAll: part asString ]
+			separatedBy: [ strm nextPut: delim ] ]
 ]
 
 { #category : #accessing }

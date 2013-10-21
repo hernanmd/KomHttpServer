@@ -55,12 +55,10 @@ ModDoc class >> fullFilePath [
 	"Ordinarily, just use the following:"
 	(Smalltalk os platformName ~= 'Mac OS')
 		ifTrue: [^self documentRoot fullNameFor: self relativeFilePath].
-
 	"But! Because of Mac idiosyncracies, we must do:"
-	^((self relativeFilePath findTokens: FileDirectory pathNameDelimiter asString)
-		inject: self documentRoot into: 
-			[ :dir :pathPart |
-			FileDirectory on: (dir fullNameFor: pathPart)]) fullName
+	^((self relativeFilePath findTokens: FileSystem disk separator asString)
+		inject: self documentRoot 
+		into: [ : dir : pathPart | (dir fullNameFor: pathPart) asFileReference ]) fullName
 			
 ]
 
@@ -109,9 +107,10 @@ ModDoc >> documentRoot [
 
 { #category : #accessing }
 ModDoc >> documentRoot: aDirectoryOrString [ 
+
 	documentRoot := aDirectoryOrString isString 
-		ifTrue: [FileDirectory on: aDirectoryOrString]
-		ifFalse: [aDirectoryOrString]
+		ifTrue: [ aDirectoryOrString asFileReference ]
+		ifFalse: [ aDirectoryOrString ]
 ]
 
 { #category : #testing }

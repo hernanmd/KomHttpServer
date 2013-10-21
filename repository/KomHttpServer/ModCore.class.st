@@ -70,13 +70,13 @@ ModCore class >> serverRoot: aFileDirectory [
 	^#'ModCore-ServerRoot' binding: aFileDirectory
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
 ModCore >> isCore [
 
 	^true
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ModCore >> optionsResponse [
 	| opts |
 	opts := self class options ifNil: ['GET,HEAD,POST,OPTIONS,TRACE'].
@@ -85,7 +85,7 @@ ModCore >> optionsResponse [
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #processing }
 ModCore >> processHttp [
 	| request method |
 	request := HttpRequest current.
@@ -106,21 +106,22 @@ ModCore >> processHttp [
 	^false
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ModCore >> serverRoot [
 
 	^serverRoot
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ModCore >> serverRoot: aDirOrString [ 
+
 	serverRoot := aDirOrString isString 
-		ifTrue: [FileDirectory on: aDirOrString]
-		ifFalse: [aDirOrString]
+		ifTrue: [ aDirOrString asFileReference ]
+		ifFalse: [ aDirOrString ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 ModCore >> traceResponse: request [
 
 	^HttpResponse fromString:

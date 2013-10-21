@@ -104,17 +104,17 @@ ModDir >> isDir [
 { #category : #'as yet unclassified' }
 ModDir >> processHttp [
 	| filePath dir request |
+	
 	request := HttpRequest current.
 	filePath := self class fullFilePath.
-	(self class directoryExists: (dir := FileDirectory on: filePath)) 
-		ifFalse: [^false].
-
+	(self class directoryExists: (dir := filePath asFileReference)) 
+		ifFalse: [ ^ false ].
 	"If the url does not end in a slash, then redirect to add the slash"
 	request url last ~= $/ 
 		ifTrue: 
 			[self redirectWithTrailingSlash: request.
-			^true].
-	(self directoryIndexExists: dir) ifTrue: [^false].
+			^ true].
+	(self directoryIndexExists: dir) ifTrue: [ ^ false ].
 	self class serverDirectory: dir.
 	^ self processSubModules 
 ]
