@@ -8,10 +8,10 @@ Here is an example of a simple configuration that authentications users:
 	authdb addUser: 'admin' withPassword: 'password'.
 	ma := ModuleAssembly core.
 	ma authenticate: authdb realm: 'Demo'.
-	ma addPlug:
-		[ :request |
+	ma addPlug: [ : request |
 		HttpResponse fromString: 'Hello world!'].
-	(HttpService startOn: 8080 named: 'Example') plug: ma rootModule. 
+	(HttpService startOn: 8080 named: 'Example') 
+		plug: ma rootModule. 
 
 Future enhancement ideas:
 

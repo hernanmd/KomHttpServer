@@ -14,7 +14,7 @@ The following is an example:
 
 	| ma |
 	ma := ModuleAssembly core.
-	ma documentRoot: FileDirectory default fullName.
+	ma documentRoot: FileSystem disk workingDirectory fullName.
 	ma directoryIndex: 'index.html index.htm'.
 	ma serveFiles.
 	(HttpService startOn: 8080 named: 'Example') plug: ma rootModule

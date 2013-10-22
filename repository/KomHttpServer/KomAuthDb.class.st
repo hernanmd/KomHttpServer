@@ -39,9 +39,7 @@ KomAuthDb >> decode: encodedPassword using: aPassword [
 { #category : #'encode-decode' }
 KomAuthDb >> encode: password [
 
-	^String streamContents: 
-		[ :strm |
-		password do: [ :ea | strm nextPutAll: ea hex]]
+	^ String streamContents: [ : strm | password do: [ : ea | strm nextPutAll: ea printStringHex ] ]
 ]
 
 { #category : #accessing }

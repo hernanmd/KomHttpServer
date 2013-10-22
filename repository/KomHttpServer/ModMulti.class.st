@@ -16,13 +16,13 @@ In the following example, a ModuleAssembly instantiated with #new will have a Mo
 	""Now create our main assembly""
 	ma := ModuleAssembly core.
 	ma alias: '/one' to: 
-		[ma documentRoot: (FileDirectory default directoryNamed: 'one').
+		[ma documentRoot: (FileSystem disk / 'one').
 		ma addAssembly: stdDocs].
 	ma alias: '/two' to:
-		[ma documentRoot: (FileDirectory default directoryNamed: 'two').
+		[ma documentRoot: (FileSystem disk / 'two').
 		ma addAssembly: stdDocs].
 	ma addPlug: 
-		[:request | HttpResponse fromString: 
+		[ : request | HttpResponse fromString: 
 			'<a href=""one"">go to one</a> <a href=""two"">go to two</a>'].
 	(HttpService startOn: 8080 named: 'Example') module: ma rootModule.
 

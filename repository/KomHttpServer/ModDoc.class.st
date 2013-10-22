@@ -14,7 +14,7 @@ The following is an example:
 
 	| ma |
 	ma := ModuleAssembly core.
-	ma documentRoot: FileDirectory default fullName.
+	ma documentRoot: FileSystem disk workingDirectory fullName.
 	ma directoryIndex: 'index.html index.htm'.
 	ma serveFiles.
 	(HttpService startOn: 8080 named: 'Example') plug: ma rootModule
@@ -51,12 +51,16 @@ ModDoc class >> documentRoot: aFileDirectory [
 ModDoc class >> fullFilePath [
 	"<String> The full path name to the file or directory on the server
 	indicated by the current HttpRequest."
-
+	" needs work for the Mac OS part "
+	
 	"Ordinarily, just use the following:"
 	(Smalltalk os platformName ~= 'Mac OS')
-		ifTrue: [^self documentRoot fullNameFor: self relativeFilePath].
+		ifTrue: [ 
+			^ self relativeFilePath isEmpty 
+				ifTrue: [ self documentRoot asFileReference fullName ]
+				ifFalse: [ (self documentRoot asFileReference / self relativeFilePath) fullName ] ].
 	"But! Because of Mac idiosyncracies, we must do:"
-	^((self relativeFilePath findTokens: FileSystem disk separator asString)
+	^ ((self relativeFilePath findTokens: FileSystem disk separator asString)
 		inject: self documentRoot 
 		into: [ : dir : pathPart | (dir fullNameFor: pathPart) asFileReference ]) fullName
 			

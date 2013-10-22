@@ -14,7 +14,7 @@ The following is an example:
 
 	| ma |
 	ma := ModuleAssembly core.
-	ma documentRoot: FileDirectory default fullName.
+	ma documentRoot: FileSystem disk workingDirectory fullName.
 	ma directoryIndex: 'index.html index.htm'.
 	ma serveFiles.
 	(HttpService startOn: 8080 named: 'Example') plug: ma rootModule
@@ -84,15 +84,15 @@ ModDir >> directoryIndex: aCollectionOrString [
 ModDir >> directoryIndexExists: dir [ 
 	| fname |
 	
-	fname := self directoryIndex detect: [:ea | dir fileExists: ea]
-				ifNone: [^false].
-
+	fname := self directoryIndex 
+					detect: [ : ea | (dir asFileReference / ea) exists ]
+					ifNone: [ ^ false ].
 	"Our directory exists, set the full file name so that
 	ModFile will detect and serve the index file (note, if no ModFile
 	gets processed after this module, then a doc not found will be returned)"
 	
 	ModDoc relativeFilePath: ModDoc relativeFilePath , fname.
-	^true
+	^ true
 ]
 
 { #category : #testing }

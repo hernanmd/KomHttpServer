@@ -2,9 +2,8 @@
 I am a module assembly.  I provide a convienient mechanism for assembling modules into a module hierarchy for use by an HttpService.  The following is a very simple example of how to use a ModuleAssembly:
 
 	| ma |
-	ma _ ModuleAssembly core.
-	ma addPlug:
-		[ :request |
+	ma := ModuleAssembly core.
+	ma addPlug: [ : request |
 		HttpResponse fromString: 'Hello World!!!'].
 	(HttpService startOn: 8080 named: 'Example') module: ma rootModule.
 "

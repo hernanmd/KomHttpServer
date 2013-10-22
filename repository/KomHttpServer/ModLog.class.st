@@ -8,7 +8,7 @@ Examples:
 The following example will log requests to the Transcript:
 
 	| ma |
-	ma _ ModuleAssembly core.
+	ma := ModuleAssembly core.
 	ma logTo: (KomLogger on: Transcript).
 	ma addPlug: [ :request | HttpResponse fromString: 'Hello World!'].
 	(HttpService startOn: 8080 named: 'Example') plug: ma rootModule
@@ -17,10 +17,10 @@ It is possible to segregate logging by inserting #logTo: messages a different pl
 
 	| ma |
 	Smalltalk at: #MyHttpLog put: (WriteStream on: '').
-	ma _ ModuleAssembly core.
+	ma := ModuleAssembly core.
 	ma alias: '/log1' to: [ma logTo: (KomLogger on: Transcript)].
 	ma alias: '/log2' to: [ma logTo: (KomLogger on: (Smalltalk at: #MyHttpLog))].
-	ma addPlug: [ :request | HttpResponse fromString: 'Hello World!'].
+	ma addPlug: [ : request | HttpResponse fromString: 'Hello World!'].
 	(HttpService startOn: 8080 named: 'Example') plug: ma rootModule
 
 In this example, all requests will respond with 'Hello World!', but requests whose url begins with '/log1' will be logged to the transcript and requests whose url begins with '/log2' will be logged to MyHttpLog.  Other requests will not be logged.
@@ -29,7 +29,7 @@ In the next example, we illustrate how to start enable logging, and also how to 
 
 	| ma logger |
 	Smalltalk at: #MyHttpLog put: (WriteStream on: '').
-	ma _ ModuleAssembly core.
+	ma := ModuleAssembly core.
 	ma logTo: (logger := KomLogger on: (Smalltalk at: #MyHttpLog)).
 	ma addPlug: [ :request | HttpResponse fromString: 'Hello World!'].
 	(HttpService startOn: 8080 named: 'Example') plug: ma rootModule.

@@ -14,10 +14,11 @@ The following is an example:
 
 	| ma |
 	ma := ModuleAssembly core.
-	ma documentRoot: FileDirectory default fullName.
+	ma documentRoot: FileSystem disk workingDirectory fullName.
 	ma directoryIndex: 'index.html index.htm'.
 	ma serveFiles.
-	(HttpService startOn: 8080 named: 'Example') plug: ma rootModule
+	(HttpService startOn: 8080 named: 'Example') 
+		plug: ma rootModule
 
 This example just starts a file server on your default directory.  Any directories (that don't have an index file) will be rendered as listings by ModAutoIndex.
 "
@@ -69,7 +70,7 @@ ModAutoIndex >> directoryListing: request directory: dir [
 		[entries := entries sortBy: [ :a :b | a name <= b name ]].
 
 	namePad := (entries inject: 16 into: [ :max :ea | ea name size max: max ]) + 1.
-	sizePad := (entries inject: 4 into: [ :max :ea | ea fileSize printString size max: max ]) + 1.
+	sizePad := (entries inject: 4 into: [ :max :ea | ea size printString size max: max ]) + 1.
 
 	^String streamContents: [ :strm |
 		strm nextPutAll: '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">'.
@@ -97,7 +98,7 @@ ModAutoIndex >> directoryListing: request directory: dir [
 ModAutoIndex >> entry: entry on: strm padNamesTo: namePad padSizesTo: sizePad [
 
 	| sizeString |
-	sizeString := entry fileSize printString.
+	sizeString := entry size printString.
 	entry isDirectory 
 		ifTrue: [strm nextPutAll: '[DIR]']
 		ifFalse: [strm nextPutAll: '     '].
@@ -108,10 +109,10 @@ ModAutoIndex >> entry: entry on: strm padNamesTo: namePad padSizesTo: sizePad [
 	strm nextPutAll: entry name.
 	strm nextPutAll: '</a>'.
 	strm nextPutAll: ((String new: (namePad - entry name size)) atAllPut: $ ; yourself).
-	(Date fromSeconds: (entry modificationTime))
+	(Date fromSeconds: (entry modificationTime asSeconds))
 		printOn: strm format: #(1 2 3 $- 2 1 2).
 	strm nextPut: $ .
-	(Time fromSeconds: (entry modificationTime))
+	(Time fromSeconds: (entry modificationTime asSeconds))
 		print24: true showSeconds: false on: strm.
 	strm nextPutAll: ((String new: (sizePad - sizeString size)) atAllPut: $ ; yourself).
 	strm nextPutAll: sizeString.

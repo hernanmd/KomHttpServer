@@ -6,7 +6,7 @@ The following is a simple example using the #notFound message of ModuleAssembly:
 	| ma |
 	ma := ModuleAssembly core.
 	ma alias: '/one' to: 
-		[ma documentRoot: (FileDirectory default directoryNamed: 'one').
+		[ma documentRoot: (FileSystem disk / 'one').
 		ma directoryIndex: 'index.html index.htm'.
 		ma serveFiles.
 		ma notFound].
@@ -21,7 +21,7 @@ By contrast, the following example will end up in our default response if no mat
 	| ma |
 	ma := ModuleAssembly core.
 	ma alias: '/one' to: 
-		[ma documentRoot: (FileDirectory default directoryNamed: 'one').
+		[ma documentRoot: (FileSystem disk / 'one').
 		ma directoryIndex: 'index.html index.htm'.
 		ma serveFiles].
 	ma addPlug: 
@@ -35,7 +35,7 @@ Class {
 	#category : #'KomHttpServer-Modules'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #processing }
 ModNotFound >> processHttp [
 
 	HttpResponse current: 
