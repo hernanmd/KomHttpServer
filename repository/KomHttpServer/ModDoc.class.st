@@ -137,7 +137,7 @@ ModDoc >> printOn: strm [
 
 	super printOn: strm.
 	strm nextPut: $(.
-	self documentRoot pathName printOn: strm.
+	self documentRoot fullName printOn: strm.
 	strm nextPut: $).
 ]
 
