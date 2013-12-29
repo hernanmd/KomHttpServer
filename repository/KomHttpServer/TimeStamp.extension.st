@@ -48,8 +48,8 @@ TimeStamp >> printHttpFormatOn: aStream [
 	"
 	
 	| d t |
-	d := self date.
-	t := self time.
+	d := self asDate.
+	t := self asTime.
 	aStream nextPutAll: (d weekday copyFrom: 1 to: 3).
 	aStream nextPutAll: ', '.
 	d printOn: aStream format: #(1 2 3 $  2 1 2).

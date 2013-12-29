@@ -338,7 +338,7 @@ HttpRequest >> initStatusString: aString [
 		ifTrue: 
 			[self method: statusLine first.
 			rawUrl := statusLine second.
-			url := (rawUrl copyUpTo: $?) unescapePercentsWithTextEncoding: nil.
+			url := (rawUrl copyUpTo: $?) urlDecoded.
 			url size + 1 < rawUrl size 
 				ifTrue: [self queryString: (rawUrl copyFrom: url size + 2 to: rawUrl size)].
 			self protocol: statusLine third asUppercase]
