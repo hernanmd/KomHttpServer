@@ -63,19 +63,19 @@ HttpRequest class >> decodeUrlEncodedForm: string multipleValues: boolean [
 	string isEmptyOrNil ifTrue: [^dict].
 	more := true.
 	start := 1.
-	[end := string indexOf: $& startingAt: start.
+	[ end := string indexOf: $& startingAt: start.
 	end == 0
 		ifTrue: [end := string size. more := false]
 		ifFalse: [end := end - 1].
 	eqSignPos := string indexOf: $= startingAt: start.
 	(eqSignPos > end or: [eqSignPos == 0])
-		ifTrue: [key := (key := string copyFrom: start to: end) unescapePercentsWithTextEncoding: nil.
+		ifTrue: [key := (key := string copyFrom: start to: end) urlDecoded.
 			value := '']
-		ifFalse: [key := (key := string copyFrom: start to: eqSignPos-1) unescapePercentsWithTextEncoding: nil.
-			value := (value := string copyFrom: eqSignPos+1 to: end) unescapePercentsWithTextEncoding: nil].
+		ifFalse: [ key := (key := string copyFrom: start to: eqSignPos-1) urlDecoded.
+			value := (value := string copyFrom: eqSignPos+1 to: end) urlDecoded ].
 	self addKey: key value: value toForm: dict multipleValues: boolean.
 	start := end + 2.
-	more] whileTrue.
+	more ] whileTrue.
 
 	^dict
 ]
