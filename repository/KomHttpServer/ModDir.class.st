@@ -31,21 +31,9 @@ Class {
 }
 
 { #category : #tests }
-ModDir class >> directoryExists: aFileDirectory [
-	"The Mac implementation of FileDirectory>>exists answers true,
-	even when the path specified is a file (not a directory) (as of
-	22 May 2003)...this differs from the Unix and Windows VMs...so 
-	this is a little hack that should work on all platforms...when the
-	Mac VM is correct, we should change this code to simply use
-	FileDirectory>>exists"
+ModDir class >> directoryExists: fileReference [
 
-	"Ordinarily, just do:"
-	Smalltalk os platformName ~= 'Mac OS' ifTrue: [^aFileDirectory exists].
-
-	"But! Because of Mac idiosyncracies, do:"
-	^aFileDirectory exists and: 
-		[aFileDirectory containingDirectory directoryNames 
-			includes: aFileDirectory localName].
+	^ fileReference exists and: [ fileReference isDirectory ]
 
 	
 ]
@@ -67,20 +55,20 @@ ModDir class >> serverDirectory: aFileDirectory [
 	#'ModDir-ServerDirectory' binding: aFileDirectory
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #processing }
 ModDir >> directoryIndex [
 
 	^directoryIndex ifNil: [directoryIndex := OrderedCollection new]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #processing }
 ModDir >> directoryIndex: aCollectionOrString [ 
 	directoryIndex := aCollectionOrString isString 
 		ifTrue: [aCollectionOrString findTokens: ' ']
 		ifFalse: [aCollectionOrString]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #processing }
 ModDir >> directoryIndexExists: dir [ 
 	| fname |
 	
@@ -101,7 +89,7 @@ ModDir >> isDir [
 	^true
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #processing }
 ModDir >> processHttp [
 	| filePath dir request |
 	
@@ -111,15 +99,14 @@ ModDir >> processHttp [
 		ifFalse: [ ^ false ].
 	"If the url does not end in a slash, then redirect to add the slash"
 	request url last ~= $/ 
-		ifTrue: 
-			[self redirectWithTrailingSlash: request.
+		ifTrue: [ self redirectWithTrailingSlash: request.
 			^ true].
 	(self directoryIndexExists: dir) ifTrue: [ ^ false ].
 	self class serverDirectory: dir.
 	^ self processSubModules 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #processing }
 ModDir >> redirectWithTrailingSlash: request [
 
 	| location |
