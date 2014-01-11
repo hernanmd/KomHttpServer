@@ -113,8 +113,8 @@ HttpRequest class >> endOfRequestHeaderMarker [
 
 { #category : #authentication }
 HttpRequest class >> hashPassword: aPassword [
-	^SecureHashAlgorithm new hashMessage:
-		(aPassword, ':', self secretWord)
+
+	^ SHA1 new hashMessage: (aPassword , ':' , self secretWord)
 ]
 
 { #category : #'initialize-release' }
