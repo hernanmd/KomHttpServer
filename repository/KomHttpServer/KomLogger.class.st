@@ -37,7 +37,7 @@ KomLogger class >> on: aStream [
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 KomLogger >> addStream: aStream [
 	"Add a new output stream to the logger"
 
@@ -45,34 +45,34 @@ KomLogger >> addStream: aStream [
 	^aStream
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 KomLogger >> attachTheTranscript [
 
 	^self addStream: Transcript.
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 KomLogger >> attachTranscript [
 	self detachTheTranscript.
 	^(self streams detect: [:ea | ea isTranscriptStream] ifNone: [nil]) 
 		ifNil: [self addStream: ThreadSafeTranscript new]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 KomLogger >> detachTheTranscript [
 
 	self removeStream: Transcript.
 	^Transcript
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 KomLogger >> detachTranscripts [
 	(self streams select: [:ea | ea isTranscriptStream]) 
 		do: [:ea | self removeStream: ea]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 KomLogger >> logEntryFor: request response: response [
 	"This is the Common Log Format (CLF)"
 
@@ -83,7 +83,7 @@ KomLogger >> logEntryFor: request response: response [
 			nextPutAll: ' - ';  "We don't bother with the ident string"
 			nextPutAll: (ModAuth user ifNil: ['-']);
 			nextPut: $ .
-		(TimeStamp fromSeconds: request timestamp)
+		(DateAndTime fromSeconds: request timestamp)
 			printCLFFormatOn: strm.
 		strm nextPutAll: ' "'.
 		request firstLineOn: strm.
@@ -97,26 +97,26 @@ KomLogger >> logEntryFor: request response: response [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 KomLogger >> next [
 
 	self shouldNotImplement
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 KomLogger >> nextPut: anArray [ 
 	| logEntry |
 	logEntry := self logEntryFor: anArray first response: anArray second.
 	self streams do: 	[:strm | strm nextPutAll: logEntry; endEntry]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 KomLogger >> openTranscript [
 
 	self attachTranscript openLabel: 'Comanche Logger'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 KomLogger >> removeStream: aStream [
 	"Remove an output stream to the logger"
 
@@ -124,13 +124,13 @@ KomLogger >> removeStream: aStream [
 	^aStream
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 KomLogger >> streams [
 
 	^streams
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 KomLogger >> streams: aStream [
 
 	streams := aStream

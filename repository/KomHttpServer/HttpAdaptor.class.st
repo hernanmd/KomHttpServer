@@ -37,7 +37,7 @@ Class {
 { #category : #timestamp }
 HttpAdaptor class >> buildTimeStamp: seconds [
 
-	^((TimeStamp fromSeconds: seconds) - self timezoneOffset) printHttpFormat
+	^((DateAndTime fromSeconds: seconds) - self timezoneOffset) printHttpFormat
 ]
 
 { #category : #bindings }
