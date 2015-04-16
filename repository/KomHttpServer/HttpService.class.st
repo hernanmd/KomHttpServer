@@ -178,20 +178,23 @@ HttpService >> initialize [
 
 { #category : #'error handling' }
 HttpService >> isDebugMode [
+	" Answer <true> if receiver's is acting in debug mode "
 
-	^self mode == #debug
+	^ self mode == #debug
 ]
 
 { #category : #'error handling' }
 HttpService >> isDeploymentMode [
-
-	^self isVerboseMode not and: [self isDebugMode not]
+	" Answer <true> if receiver's is acting in deployment mode "
+	
+	^ self isVerboseMode not and: [ self isDebugMode not ]
 ]
 
 { #category : #'error handling' }
 HttpService >> isVerboseMode [
-
-	^self mode == #verbose
+	" Answer <true> if receiver's is acting in verbose mode "
+	
+	^ self mode == #verbose
 ]
 
 { #category : #configuration }
@@ -211,7 +214,7 @@ HttpService >> mode [
 	"<#deployment | #debug | #verbose > - Answers the debugging
 	mode of the receiver."
 
-	^mode
+	^ mode
 ]
 
 { #category : #'error handling' }
@@ -224,8 +227,7 @@ HttpService >> mode: aSymbol [
 
 { #category : #pluggable }
 HttpService >> module: aComancheModule [
-	"This message is useful if you wish to 
-	validate your module."
+	" This message is useful if you wish to validate your module. "
 
 	aComancheModule validate.
 	self plug: aComancheModule
