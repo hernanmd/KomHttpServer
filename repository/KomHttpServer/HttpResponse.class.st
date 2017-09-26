@@ -392,13 +392,12 @@ HttpResponse >> isPersistent [
 
 { #category : #responding }
 HttpResponse >> pvtWriteContentLengthOn: aStream [
-
-	self contentLength ifNotNilDo:
-		[ :length |
-		aStream
-			nextPutAll: 'Content-length: ';
-			nextPutAll: length asString;
-			nextPutAll: String crlf]
+	self contentLength
+		ifNotNil: [ :length | 
+			aStream
+				nextPutAll: 'Content-length: ';
+				nextPutAll: length asString;
+				nextPutAll: String crlf ]
 ]
 
 { #category : #responding }
