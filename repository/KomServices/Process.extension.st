@@ -2,14 +2,13 @@ Extension { #name : #Process }
 
 { #category : #'*KomServices' }
 Process >> okToTerminate [
-
-	self suspendedContext ifNotNilDo: 
-		[ :suspendedCtx |
-		suspendedCtx stackDo: 
-			[ :ctx |
-			ctx method == self class termMethod
-				ifTrue: [^true]]].
-	^false
+	self suspendedContext
+		ifNotNil: [ :suspendedCtx | 
+			suspendedCtx
+				stackDo: [ :ctx | 
+					ctx method == self class termMethod
+						ifTrue: [ ^ true ] ] ].
+	^ false
 ]
 
 { #category : #'*KomServices' }
