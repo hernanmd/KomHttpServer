@@ -9,8 +9,8 @@ Form >> asHttpResponseTo: request [
 Form >> asWebImage [
 	"return a MIMEDocument"
 	| aStream |
-	aStream := (RWBinaryOrTextStream on: String new).
+	aStream := String new writeStream.
 	GIFReadWriter putForm: (self asFormOfDepth: 8) onStream: aStream.
 	aStream reset.
-	^MIMEDocument contentType: MIMEDocument contentTypeGif content: aStream
+	^ MIMEDocument contentType: MIMEDocument contentTypeGif content: aStream
 ]

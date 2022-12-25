@@ -265,7 +265,7 @@ TcpListener >> pvtOldListenLoop: aBlock [
 					[self bind: socket withBacklogSize: self backlogSize.
 					self socketsToDestroy add: socket].
 				Process terminationOkDuring: 
-					[[socket waitForConnectionUntil: (Socket deadlineSecs: 10)]
+					[[socket waitForConnectionFor: (Socket deadlineSecs: 10)]
 						ensure: [socket destroy]].
 				socket isConnected
 					ifTrue: 

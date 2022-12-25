@@ -109,11 +109,9 @@ ModAutoIndex >> entry: entry on: strm padNamesTo: namePad padSizesTo: sizePad [
 	strm nextPutAll: entry name.
 	strm nextPutAll: '</a>'.
 	strm nextPutAll: ((String new: (namePad - entry name size)) atAllPut: $ ; yourself).
-	(Date fromSeconds: (entry modificationTime asSeconds))
-		printOn: strm format: #(1 2 3 $- 2 1 2).
+	(Date fromSeconds: (entry modificationTime asSeconds)) printOn: strm format: #(1 2 3 $- 2 1 2).
 	strm nextPut: $ .
-	(Time fromSeconds: (entry modificationTime asSeconds))
-		print24: true showSeconds: false on: strm.
+	(Time fromSeconds: entry modificationTime seconds) print24: true showSeconds: false on: strm.
 	strm nextPutAll: ((String new: (sizePad - sizeString size)) atAllPut: $ ; yourself).
 	strm nextPutAll: sizeString.
 	strm nextPutAll: String crlf.

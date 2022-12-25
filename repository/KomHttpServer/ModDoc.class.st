@@ -49,9 +49,8 @@ ModDoc class >> documentRoot: aFileDirectory [
 
 { #category : #bindings }
 ModDoc class >> fullFilePath [
-	"<String> The full path name to the file or directory on the server
-	indicated by the current HttpRequest."
-	" needs work for the Mac OS part "
+	"<String> The full path name to the file or directory on the server indicated by the current HttpRequest.
+	needs work for the Mac OS part "
 	
 	"Ordinarily, just use the following:"
 	(Smalltalk os platformName ~= 'Mac OS')
@@ -62,7 +61,7 @@ ModDoc class >> fullFilePath [
 	"But! Because of Mac idiosyncracies, we must do:"
 	^ ((self relativeFilePath findTokens: FileSystem disk separator asString)
 		inject: self documentRoot 
-		into: [ : dir : pathPart | (dir fullNameFor: pathPart) asFileReference ]) fullName
+		into: [ : dir : pathPart | dir / pathPart ]) fullName
 			
 ]
 
